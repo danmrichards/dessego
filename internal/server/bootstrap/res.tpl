@@ -1,0 +1,30 @@
+<ss>0</ss>
+<lang1></lang1>
+<lang2></lang2>
+<lang3></lang3>
+<lang4></lang4>
+<lang5></lang5>
+<lang6></lang6>
+<lang7></lang7>
+<lang8></lang8>
+<lang11></lang11>
+<lang12></lang12>{{range $index, $server := .Servers}}
+<gameurl{{ $index }}>{{ $server }}</gameurl{{ $index }}>{{end}}
+<browserurl1></browserurl1>
+<browserurl2></browserurl2>
+<browserurl3></browserurl3>
+<interval1>120</interval1>
+<interval2>120</interval2>
+<interval3>120</interval3>
+<interval4>120</interval4>
+<interval5>120</interval5>
+<interval6>120</interval6>
+<interval7>120</interval7>
+<interval8>120</interval8>
+<interval11>120</interval11>
+<interval12>120</interval12>
+<getWanderingGhostInterval>20</getWanderingGhostInterval>
+<setWanderingGhostInterval>20</setWanderingGhostInterval>
+<getBloodMessageNum>80</getBloodMessageNum>
+<getReplayListNum>80</getReplayListNum>
+<enableWanderingGhost>1</enableWanderingGhost>
