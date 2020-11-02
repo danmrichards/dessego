@@ -14,13 +14,13 @@ type bootstrapData struct {
 	// TODO: Configure other bootstrap elements
 }
 
-func (s *Server) handleBootstrap() http.HandlerFunc {
+func (s *Server) bootstrapHandler() http.HandlerFunc {
 	tpl := template.Must(template.ParseFiles("internal/server/bootstrap/res.tpl"))
 
 	// Regional game server URLs.
-	urlUS := "http://" + s.host + ":" + s.gs["US"] + "/cgi-bin/"
-	urlEU := "http://" + s.host + ":" + s.gs["EU"] + "/cgi-bin/"
-	urlJP := "http://" + s.host + ":" + s.gs["JP"] + "/cgi-bin/"
+	urlUS := "http://" + s.gsHost + ":" + s.gs["US"] + "/cgi-bin/"
+	urlEU := "http://" + s.gsHost + ":" + s.gs["EU"] + "/cgi-bin/"
+	urlJP := "http://" + s.gsHost + ":" + s.gs["JP"] + "/cgi-bin/"
 
 	// Data needed for game bootstrap.
 	bd := bootstrapData{

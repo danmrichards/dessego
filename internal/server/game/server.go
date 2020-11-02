@@ -8,22 +8,19 @@ import (
 
 // Server is a game server.
 type Server struct {
-	host string
-	port string
-	l    net.Listener
-	r    *http.ServeMux
-	h    *http.Server
+	l net.Listener
+	r *http.ServeMux
+	h *http.Server
 }
 
 // NewServer returns a game server configured to run on the given host and port.
-func NewServer(host, port string) (s *Server, err error) {
+func NewServer(port string) (s *Server, err error) {
 	s = &Server{
-		host: host,
-		port: port,
-		r:    http.NewServeMux(),
+		r: http.NewServeMux(),
 	}
 
-	s.l, err = net.Listen("tcp4", net.JoinHostPort(host, port))
+	addr := net.JoinHostPort("", port)
+	s.l, err = net.Listen("tcp4", addr)
 	if err != nil {
 		return nil, fmt.Errorf("net listen: %w", err)
 	}
@@ -31,7 +28,7 @@ func NewServer(host, port string) (s *Server, err error) {
 	s.routes()
 
 	s.h = &http.Server{
-		Addr:    net.JoinHostPort(s.host, s.port),
+		Addr:    addr,
 		Handler: s.r,
 	}
 

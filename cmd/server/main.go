@@ -14,7 +14,7 @@ import (
 
 const (
 	// TODO: Make configurable
-	host          = "127.0.0.1"
+	hostGame      = "127.0.0.1"
 	portBootstrap = "18000"
 	portUS        = "18666"
 	portEU        = "18667"
@@ -32,7 +32,7 @@ func main() {
 
 	servers := make([]io.Closer, 0, 4)
 
-	bs, err := bootstrap.NewServer(host, portBootstrap, gameServers)
+	bs, err := bootstrap.NewServer(portBootstrap, hostGame, gameServers)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,7 +46,7 @@ func main() {
 	}()
 
 	for region, port := range gameServers {
-		gs, err := game.NewServer(host, port)
+		gs, err := game.NewServer(port)
 		if err != nil {
 			log.Fatal(err)
 		}
