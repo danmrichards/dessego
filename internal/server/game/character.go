@@ -3,7 +3,6 @@ package game
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/danmrichards/dessego/internal/transport"
@@ -19,7 +18,7 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			log.Println(err)
+			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -27,14 +26,14 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 
 		var icr initCharacterReq
 		if err = transport.DecodeRequest(s.rd, b, &icr); err != nil {
-			log.Println(err)
+			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// Create the player, if it does not exist, in the DB.
 		if err = s.ps.EnsureCreate(icr.CharacterID, icr.Index); err != nil {
-			log.Println(err)
+			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -49,7 +48,7 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		data := ucID + "\x00"
 
 		if err = transport.WriteResponse(w, cmd, data); err != nil {
-			log.Println(err)
+			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

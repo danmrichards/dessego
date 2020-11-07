@@ -10,7 +10,6 @@ lint:
 deps:
 	go mod verify && \
 	go mod tidy && \
-	go mod vendor && \
-	modvendor -copy="**/*.c **/*.h **/*.m"
+	go mod vendor
 
 .PHONY: pkg build lint deps

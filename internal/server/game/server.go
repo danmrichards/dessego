@@ -5,14 +5,18 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/rs/zerolog"
+
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
 // Server is a gamestate server.
 type Server struct {
-	l net.Listener
-	r *http.ServeMux
-	h *http.Server
+	nl net.Listener
+	r  *http.ServeMux
+	h  *http.Server
+
+	l zerolog.Logger
 
 	rd transport.RequestDecrypter
 
@@ -21,16 +25,17 @@ type Server struct {
 }
 
 // NewServer returns a gamestate server configured to run on the given host and port.
-func NewServer(port string, rd transport.RequestDecrypter, ps Players, gs State) (s *Server, err error) {
+func NewServer(port string, rd transport.RequestDecrypter, ps Players, gs State, l zerolog.Logger) (s *Server, err error) {
 	s = &Server{
 		r:  http.NewServeMux(),
 		rd: rd,
 		ps: ps,
 		gs: gs,
+		l:  l,
 	}
 
 	addr := net.JoinHostPort("", port)
-	s.l, err = net.Listen("tcp4", addr)
+	s.nl, err = net.Listen("tcp4", addr)
 	if err != nil {
 		return nil, fmt.Errorf("net listen: %w", err)
 	}
@@ -47,7 +52,7 @@ func NewServer(port string, rd transport.RequestDecrypter, ps Players, gs State)
 
 // Serve accepts incoming gamestate connections.
 func (s *Server) Serve() error {
-	return s.h.Serve(s.l)
+	return s.h.Serve(s.nl)
 }
 
 // Close closes the gamestate server.

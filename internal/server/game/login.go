@@ -1,7 +1,6 @@
 package game
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -21,7 +20,7 @@ func (s *Server) loginHandler() http.HandlerFunc {
 		data := "\x01" + "\x02" + strings.Join(s.gs.Motd(), "\x00") + "\x00"
 
 		if err := transport.WriteResponse(w, 0x02, data); err != nil {
-			log.Println(err)
+			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

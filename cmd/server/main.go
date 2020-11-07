@@ -1,22 +1,19 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"io"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/danmrichards/dessego/internal/service/gamestate"
-
 	"github.com/danmrichards/dessego/internal/crypto"
+	"github.com/danmrichards/dessego/internal/database"
 	"github.com/danmrichards/dessego/internal/server/bootstrap"
 	"github.com/danmrichards/dessego/internal/server/game"
+	"github.com/danmrichards/dessego/internal/service/gamestate"
 	"github.com/danmrichards/dessego/internal/service/player"
 	"github.com/danmrichards/dessego/internal/transport"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog"
 )
 
 const (
@@ -37,17 +34,11 @@ var gameServers = map[string]string{
 }
 
 func main() {
-	// TODO: Logging
+	l := zerolog.New(os.Stdout)
 
-	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-		if _, err = os.Create("./db/dessego.db"); err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	db, err := sql.Open("sqlite3", "./db/dessego.db")
+	db, err := database.NewSQLite(dbPath)
 	if err != nil {
-		log.Fatal(err)
+		fatal(l, err)
 	}
 	defer db.Close()
 
@@ -57,16 +48,16 @@ func main() {
 	// Bootstrap server; used to allow Demon's Souls to configure it's network
 	// client.
 	var bs *bootstrap.Server
-	bs, err = bootstrap.NewServer(portBootstrap, hostGame, gameServers)
+	bs, err = bootstrap.NewServer(portBootstrap, hostGame, gameServers, l)
 	if err != nil {
-		log.Fatal(err)
+		fatal(l, err)
 	}
 	servers = append(servers, bs)
 
-	log.Println("bootstrap server listening on", portBootstrap)
+	l.Info().Msg("bootstrap server listening on " + portBootstrap)
 	go func() {
 		if err = bs.Serve(); err != nil {
-			log.Fatal(err)
+			fatal(l, err)
 		}
 	}()
 
@@ -74,27 +65,27 @@ func main() {
 	var rd transport.RequestDecrypter
 	rd, err = crypto.NewDecrypter(crypto.DefaultAESKey)
 	if err != nil {
-		log.Fatal(err)
+		fatal(l, err)
 	}
 
 	var p game.Players
 	p, err = player.NewSQLiteService(db)
 	if err != nil {
-		log.Fatal(err)
+		fatal(l, err)
 	}
 
 	// Create a gamestate server for each supported region
 	for region, port := range gameServers {
-		gs, err := game.NewServer(port, rd, p, gamestate.NewMemory())
+		gs, err := game.NewServer(port, rd, p, gamestate.NewMemory(), l)
 		if err != nil {
-			log.Fatal(err)
+			fatal(l, err)
 		}
 		servers = append(servers, gs)
 
-		log.Println(region+" transport server listening on", port)
+		l.Info().Msg(region + " transport server listening on " + port)
 		go func() {
 			if err = gs.Serve(); err != nil {
-				log.Fatal(err)
+				fatal(l, err)
 			}
 		}()
 	}
@@ -103,12 +94,15 @@ func main() {
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
 	<-sigChan
 
-	fmt.Println()
-	fmt.Println("shutting down servers...")
+	l.Info().Msg("shutting down servers...")
 
 	for _, s := range servers {
 		if err = s.Close(); err != nil {
-			log.Println("close server:", err)
+			l.Error().Err(err).Msg("close server")
 		}
 	}
+}
+
+func fatal(l zerolog.Logger, err error) {
+	l.Fatal().Err(err).Msg("fatal error")
 }

@@ -1,7 +1,6 @@
 package game
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/danmrichards/dessego/internal/server/middleware"
@@ -11,15 +10,19 @@ const routePrefix = "/cgi-bin"
 
 func (s *Server) routes() {
 	s.r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("unhandled request (%s %s) from %q to %q", r.Method, r.URL.Path, r.RemoteAddr, s.l.Addr())
+		s.l.Warn().
+			Str("method", r.Method).
+			Str("path", r.URL.Path).
+			Str("client", r.RemoteAddr).
+			Msg("unhandled request")
 	})
 
 	s.r.HandleFunc(
 		routePrefix+"/login.spd",
-		middleware.LogRequest("login", s.loginHandler()),
+		middleware.LogRequest(s.l, s.loginHandler()),
 	)
 	s.r.HandleFunc(
 		routePrefix+"/initializeCharacter.spd",
-		middleware.LogRequest("init character", s.initCharacterHandler()),
+		middleware.LogRequest(s.l, s.initCharacterHandler()),
 	)
 }

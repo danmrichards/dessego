@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"bytes"
 	"encoding/base64"
-	"log"
 	"net/http"
 	"text/template"
 )
@@ -41,7 +40,7 @@ func (s *Server) bootstrapHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var buf bytes.Buffer
 		if err := tpl.Execute(&buf, bd); err != nil {
-			log.Println(err)
+			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
