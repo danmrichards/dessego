@@ -4,13 +4,17 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+
+	"github.com/danmrichards/dessego/internal/crypto"
+	"github.com/danmrichards/dessego/internal/transport"
 )
 
 // Server is a game server.
 type Server struct {
-	l net.Listener
-	r *http.ServeMux
-	h *http.Server
+	l  net.Listener
+	r  *http.ServeMux
+	h  *http.Server
+	rd transport.RequestDecrypter
 }
 
 // NewServer returns a game server configured to run on the given host and port.
@@ -23,6 +27,11 @@ func NewServer(port string) (s *Server, err error) {
 	s.l, err = net.Listen("tcp4", addr)
 	if err != nil {
 		return nil, fmt.Errorf("net listen: %w", err)
+	}
+
+	s.rd, err = crypto.NewDecrypter(crypto.DefaultAESKey)
+	if err != nil {
+		return nil, err
 	}
 
 	s.routes()

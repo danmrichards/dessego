@@ -1,15 +1,12 @@
 package game
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 
-	"github.com/danmrichards/dessego/internal/transport/encoding/form"
+	"github.com/danmrichards/dessego/internal/transport"
 )
 
 func (s *Server) initCharacterHandler() http.HandlerFunc {
@@ -32,40 +29,8 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		}
 		defer r.Body.Close()
 
-		// Demon's Souls sends it's request body as an AES encrypted version of
-		// a standard HTTP form POST.
-
-		// TODO: Move to dependency of the game server.
-		// Check out the super secure AES key. The real game used this...
-		c, err := aes.NewCipher([]byte("11111111222222223333333344444444"))
-		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Block-chain mode decrypter, pulling out the initialisation vector
-		// (IV) from the body.
-		cbc := cipher.NewCBCDecrypter(c, b[:aes.BlockSize])
-
-		// Decrypt everything in the body, following the IV.
-		req := make([]byte, len(b[aes.BlockSize:]))
-		cbc.CryptBlocks(req, b[aes.BlockSize:])
-
-		// Trim the trailing characters.
-		trim := int(req[len(req)-1])
-		req = req[:len(req)-trim]
-
-		// Can now use the body as a normal HTTP form.
-		v, err := url.ParseQuery(string(req))
-		if err != nil {
-			log.Println(err)
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
 		var icr initCharacterReq
-		if err = form.NewDecoder(v).Decode(&icr); err != nil {
+		if err = transport.DecodeRequest(s.rd, b, &icr); err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
