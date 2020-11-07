@@ -17,12 +17,12 @@ type bootstrapData struct {
 func (s *Server) bootstrapHandler() http.HandlerFunc {
 	tpl := template.Must(template.ParseFiles("internal/server/bootstrap/res.tpl"))
 
-	// Regional game server URLs.
+	// Regional gamestate server URLs.
 	urlUS := "http://" + s.gsHost + ":" + s.gs["US"] + "/cgi-bin/"
 	urlEU := "http://" + s.gsHost + ":" + s.gs["EU"] + "/cgi-bin/"
 	urlJP := "http://" + s.gsHost + ":" + s.gs["JP"] + "/cgi-bin/"
 
-	// Data needed for game bootstrap.
+	// Data needed for gamestate bootstrap.
 	bd := bootstrapData{
 		Servers: map[int]string{
 			1:  urlUS,
@@ -39,8 +39,6 @@ func (s *Server) bootstrapHandler() http.HandlerFunc {
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("bootstrap request from %q to %q", r.RemoteAddr, s.l.Addr())
-
 		var buf bytes.Buffer
 		if err := tpl.Execute(&buf, bd); err != nil {
 			log.Println(err)

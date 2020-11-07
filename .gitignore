@@ -86,4 +86,5 @@ $RECYCLE.BIN/
 *.lnk
 
 .idea
-bin
+bin
+db/*.db

@@ -8,7 +8,7 @@ import (
 	"io"
 )
 
-// WriteResponse writes a game response command and data to the given writer.
+// WriteResponse writes a gamestate response command and data to the given writer.
 func WriteResponse(w io.Writer, cmd int, data string) error {
 	rb, err := buildResponse(cmd, data)
 	if err != nil {
@@ -30,7 +30,7 @@ func WriteResponse(w io.Writer, cmd int, data string) error {
 	return nil
 }
 
-// buildResponse returns a byte slice representing a game server response.
+// buildResponse returns a byte slice representing a gamestate server response.
 //
 // Responses are in the format <CMD_FLAG><DATA_LENGTH><DATA>
 func buildResponse(cmd int, data string) ([]byte, error) {

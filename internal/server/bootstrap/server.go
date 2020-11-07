@@ -17,7 +17,7 @@ type Server struct {
 
 // NewServer returns a bootstrap server configured to run on the given host and port.
 //
-// The server will provide data for a game to bootstrap and talk to the configured game servers.
+// The server will provide data for a gamestate to bootstrap and talk to the configured gamestate servers.
 func NewServer(port, gsHost string, gameServers map[string]string) (s *Server, err error) {
 	s = &Server{
 		gsHost: gsHost,

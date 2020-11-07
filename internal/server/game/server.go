@@ -5,33 +5,34 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/danmrichards/dessego/internal/crypto"
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
-// Server is a game server.
+// Server is a gamestate server.
 type Server struct {
-	l  net.Listener
-	r  *http.ServeMux
-	h  *http.Server
+	l net.Listener
+	r *http.ServeMux
+	h *http.Server
+
 	rd transport.RequestDecrypter
+
+	ps Players
+	gs State
 }
 
-// NewServer returns a game server configured to run on the given host and port.
-func NewServer(port string) (s *Server, err error) {
+// NewServer returns a gamestate server configured to run on the given host and port.
+func NewServer(port string, rd transport.RequestDecrypter, ps Players, gs State) (s *Server, err error) {
 	s = &Server{
-		r: http.NewServeMux(),
+		r:  http.NewServeMux(),
+		rd: rd,
+		ps: ps,
+		gs: gs,
 	}
 
 	addr := net.JoinHostPort("", port)
 	s.l, err = net.Listen("tcp4", addr)
 	if err != nil {
 		return nil, fmt.Errorf("net listen: %w", err)
-	}
-
-	s.rd, err = crypto.NewDecrypter(crypto.DefaultAESKey)
-	if err != nil {
-		return nil, err
 	}
 
 	s.routes()
@@ -44,12 +45,12 @@ func NewServer(port string) (s *Server, err error) {
 	return s, nil
 }
 
-// Serve accepts incoming game connections.
+// Serve accepts incoming gamestate connections.
 func (s *Server) Serve() error {
 	return s.h.Serve(s.l)
 }
 
-// Close closes the game server.
+// Close closes the gamestate server.
 func (s *Server) Close() error {
 	return s.h.Close()
 }
