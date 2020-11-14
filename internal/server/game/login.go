@@ -19,7 +19,7 @@ func (s *Server) loginHandler() http.HandlerFunc {
 		// 0x07 - network play cannot be used with this version
 		data := "\x01" + "\x02" + strings.Join(s.gs.Motd(), "\x00") + "\x00"
 
-		if err := transport.WriteResponse(w, 0x02, data); err != nil {
+		if err := transport.WriteResponse(w, 0x02, []byte(data)); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

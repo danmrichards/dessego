@@ -9,7 +9,7 @@ import (
 )
 
 // WriteResponse writes a gamestate response command and data to the given writer.
-func WriteResponse(w io.Writer, cmd int, data string) error {
+func WriteResponse(w io.Writer, cmd int, data []byte) error {
 	rb, err := buildResponse(cmd, data)
 	if err != nil {
 		return fmt.Errorf("build response: %w", err)
@@ -33,7 +33,7 @@ func WriteResponse(w io.Writer, cmd int, data string) error {
 // buildResponse returns a byte slice representing a gamestate server response.
 //
 // Responses are in the format <CMD_FLAG><DATA_LENGTH><DATA>
-func buildResponse(cmd int, data string) ([]byte, error) {
+func buildResponse(cmd int, data []byte) ([]byte, error) {
 	buf := new(bytes.Buffer)
 
 	// Command flag.
@@ -45,7 +45,7 @@ func buildResponse(cmd int, data string) ([]byte, error) {
 	}
 
 	// Data.
-	buf.WriteString(data)
+	buf.Write(data)
 
 	return buf.Bytes(), nil
 }

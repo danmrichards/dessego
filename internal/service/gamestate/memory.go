@@ -40,6 +40,19 @@ func (m *Memory) AddPlayer(ip, id string) {
 	m.players[ip] = id
 }
 
+// Player returns the ID of a player with the given IP address.
+func (m *Memory) Player(ip string) (string, error) {
+	m.Lock()
+	defer m.Unlock()
+
+	id, ok := m.players[ip]
+	if !ok {
+		return "", PlayerNotFoundError(ip)
+	}
+
+	return id, nil
+}
+
 func (m *Memory) playerCount() int {
 	m.Lock()
 	defer m.Unlock()

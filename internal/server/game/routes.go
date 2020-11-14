@@ -25,4 +25,16 @@ func (s *Server) routes() {
 		routePrefix+"/initializeCharacter.spd",
 		middleware.LogRequest(s.l, s.initCharacterHandler()),
 	)
+	s.r.HandleFunc(
+		routePrefix+"/getQWCData.spd",
+		middleware.LogRequest(s.l, s.characterTendencyHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/getMultiPlayGrade.spd",
+		middleware.LogRequest(s.l, s.characterMPGradeHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/getBloodMessageGrade.spd",
+		middleware.LogRequest(s.l, s.characterBloodMsgGradeHandler()),
+	)
 }
