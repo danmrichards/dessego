@@ -31,4 +31,8 @@ type State interface {
 
 	// Player returns the ID of a player with the given IP address
 	Player(ip string) (string, error)
+
+	// TODO: Add Ghost
+
+	// TODO: Get Ghost
 }
