@@ -22,7 +22,7 @@ func (s Stats) Vals() []int {
 // String implements fmt.Stringer.
 func (s Stats) String() string {
 	return fmt.Sprintf(
-		"grade_s: %d grade_a: %d grade_b: %s grade_c: %s grade_d: %d sessions: %d",
+		"grade_s: %d grade_a: %d grade_b: %d grade_c: %d grade_d: %d sessions: %d",
 		s.GradeS, s.GradeA, s.GradeB, s.GradeC, s.GradeD, s.Sessions,
 	)
 }

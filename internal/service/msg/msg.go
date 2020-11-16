@@ -3,6 +3,8 @@ package msg
 import (
 	"encoding/binary"
 	"math"
+
+	dsmath "github.com/danmrichards/dessego/internal/math"
 )
 
 // BloodMsg represents a blood message.
@@ -66,7 +68,9 @@ func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 	}
 
 	// BlockID.
-	bm.BlockID = int(binary.LittleEndian.Uint32(b[cursor : cursor+4]))
+	bm.BlockID = dsmath.MakeSignedInt(
+		int(binary.LittleEndian.Uint32(b[cursor : cursor+4])),
+	)
 	cursor += 4
 
 	// Positional data.

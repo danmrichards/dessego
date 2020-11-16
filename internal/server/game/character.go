@@ -55,6 +55,8 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		// Track the player in game state.
 		s.gs.AddPlayer(ip, ucID)
 
+		s.l.Debug().Msgf("player %q logged in", ucID)
+
 		data := new(bytes.Buffer)
 		data.WriteString(ucID)
 		data.WriteByte(0x00)

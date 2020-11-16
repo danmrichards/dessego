@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	dsmath "github.com/danmrichards/dessego/internal/math"
 	"github.com/danmrichards/dessego/internal/service/msg"
 	"github.com/danmrichards/dessego/internal/transport"
 )
@@ -35,6 +36,7 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		bmr.BlockID = dsmath.MakeSignedInt(bmr.BlockID)
 
 		msgs := make([]msg.BloodMsg, 0, 10)
 
@@ -69,6 +71,7 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 			msgs = append(msgs, lm...)
 		}
 
+		// TODO: Load area names into memory for nicer logging
 		s.l.Debug().Msgf(
 			"%d blood messages block: %d character: %q",
 			len(msgs), bmr.BlockID, bmr.CharacterID,

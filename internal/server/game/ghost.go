@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	dsmath "github.com/danmrichards/dessego/internal/math"
+
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
@@ -33,6 +35,7 @@ func (s *Server) getGhostHandler() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		ggr.BlockID = dsmath.MakeSignedInt(ggr.BlockID)
 
 		fmt.Printf("%+v\n", ggr)
 
