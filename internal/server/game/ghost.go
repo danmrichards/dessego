@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	dsmath "github.com/danmrichards/dessego/internal/math"
-
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
@@ -14,7 +12,7 @@ func (s *Server) getGhostHandler() http.HandlerFunc {
 	type getGhostReq struct {
 		Version     int      `form:"ver"`
 		CharacterID string   `form:"characterID"`
-		BlockID     int      `form:"blockID"`
+		BlockID     uint32   `form:"blockID"`
 		MaxGhosts   int      `form:"maxGhostNum"`
 		SOS         int      `form:"sosNum"`
 		SOSIDList   []string `form:"sosIDList"`
@@ -35,9 +33,12 @@ func (s *Server) getGhostHandler() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		ggr.BlockID = dsmath.MakeSignedInt(ggr.BlockID)
 
-		fmt.Printf("%+v\n", ggr)
+		// Demon's Souls doesn't send signed integers for block IDs for some
+		// reason. Coerce it.
+		blockID := int32(ggr.BlockID)
+
+		fmt.Printf("block: %d req: %+v\n", blockID, ggr)
 
 		// TODO: Get Ghost
 	}

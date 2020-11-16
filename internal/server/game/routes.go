@@ -14,7 +14,13 @@ func (s *Server) routes() {
 			Str("method", r.Method).
 			Str("path", r.URL.Path).
 			Str("client", r.RemoteAddr).
-			Msg("unhandled request")
+			Msg("")
+
+		// Throw a panic here as a 404 or any other form of the server accepting
+		// the request will not cause Demon's Souls to treat the request as
+		// failed. Need the request to be treated as failed to ensure it moves
+		// on to the next one.
+		panic("unhandled request")
 	})
 
 	// System routes.
@@ -46,10 +52,10 @@ func (s *Server) routes() {
 	)
 
 	// Ghost routes.
-	s.r.HandleFunc(
-		routePrefix+"/getWanderingGhost.spd",
-		middleware.LogRequest(s.l, s.getGhostHandler()),
-	)
+	//s.r.HandleFunc(
+	//	routePrefix+"/getWanderingGhost.spd",
+	//	middleware.LogRequest(s.l, s.getGhostHandler()),
+	//)
 
 	// Blood message routes.
 	s.r.HandleFunc(

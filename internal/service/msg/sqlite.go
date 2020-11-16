@@ -54,7 +54,7 @@ func NewSQLiteService(db *sql.DB, l zerolog.Logger, opts ...Option) (*SQLiteServ
 
 // Player returns n messages for the given player and within the given
 // block ID.
-func (s *SQLiteService) Player(playerID string, blockID, n int) (bms []BloodMsg, err error) {
+func (s *SQLiteService) Player(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
 		`SELECT *
@@ -102,7 +102,7 @@ func (s *SQLiteService) Player(playerID string, blockID, n int) (bms []BloodMsg,
 
 // NonPlayer returns n messages for anyone other than the given player and
 // within the given block ID.
-func (s *SQLiteService) NonPlayer(playerID string, blockID, n int) (bms []BloodMsg, err error) {
+func (s *SQLiteService) NonPlayer(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
 		`SELECT *
@@ -149,7 +149,7 @@ func (s *SQLiteService) NonPlayer(playerID string, blockID, n int) (bms []BloodM
 }
 
 // Legacy returns n legacy messages within the given block ID.
-func (s *SQLiteService) Legacy(blockID, n int) (bms []BloodMsg, err error) {
+func (s *SQLiteService) Legacy(blockID int32, n int) (bms []BloodMsg, err error) {
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
 		`SELECT *

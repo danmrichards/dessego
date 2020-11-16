@@ -1,11 +1,11 @@
 package game
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/binary"
 	"io/ioutil"
 	"net/http"
 
-	dsmath "github.com/danmrichards/dessego/internal/math"
 	"github.com/danmrichards/dessego/internal/service/msg"
 	"github.com/danmrichards/dessego/internal/transport"
 )
@@ -15,7 +15,7 @@ const legacyMessageLimit = 5
 
 func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 	type getBloodMsgReq struct {
-		BlockID     int    `form:"blockID"`
+		BlockID     uint32 `form:"blockID"`
 		ReplayNum   int    `form:"replayNum"`
 		CharacterID string `form:"characterID"`
 		Version     int    `form:"ver"`
@@ -36,12 +36,15 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		bmr.BlockID = dsmath.MakeSignedInt(bmr.BlockID)
+
+		// Demon's Souls doesn't send signed integers for block IDs for some
+		// reason. Coerce it.
+		blockID := int32(bmr.BlockID)
 
 		msgs := make([]msg.BloodMsg, 0, 10)
 
 		// Player own messages.
-		pm, err := s.ms.Player(bmr.CharacterID, bmr.BlockID, bmr.ReplayNum)
+		pm, err := s.ms.Player(bmr.CharacterID, blockID, bmr.ReplayNum)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -51,7 +54,7 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 		msgs = append(msgs, pm...)
 
 		// Other player messages.
-		opm, err := s.ms.NonPlayer(bmr.CharacterID, bmr.BlockID, remaining)
+		opm, err := s.ms.NonPlayer(bmr.CharacterID, blockID, remaining)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -61,8 +64,8 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 		msgs = append(msgs, opm...)
 
 		// Legacy messages.
-		if (len(pm)+len(opm)) < legacyMessageLimit && remaining > 0 {
-			lm, err := s.ms.Legacy(bmr.BlockID, bmr.ReplayNum)
+		if len(msgs) < legacyMessageLimit && remaining > 0 {
+			lm, err := s.ms.Legacy(blockID, bmr.ReplayNum)
 			if err != nil {
 				s.l.Err(err).Msg("")
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -74,11 +77,23 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 		// TODO: Load area names into memory for nicer logging
 		s.l.Debug().Msgf(
 			"%d blood messages block: %d character: %q",
-			len(msgs), bmr.BlockID, bmr.CharacterID,
+			len(msgs), blockID, bmr.CharacterID,
 		)
 
-		// TODO: Serialize messages.
+		// Message bytes.
+		mb := new(bytes.Buffer)
+		for _, m := range msgs {
+			mb.Write(m.Bytes())
+		}
 
-		fmt.Println(msgs)
+		res := new(bytes.Buffer)
+		binary.Write(res, binary.LittleEndian, uint32(mb.Len()))
+		res.Write(mb.Bytes())
+
+		if err = transport.WriteResponse(w, 0x1f, res.Bytes()); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 }

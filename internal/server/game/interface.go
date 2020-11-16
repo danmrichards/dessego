@@ -47,12 +47,12 @@ type State interface {
 type Messages interface {
 	// Player returns n messages for the given player and within the given
 	// block ID.
-	Player(playerID string, blockID, n int) ([]msg.BloodMsg, error)
+	Player(playerID string, blockID int32, n int) ([]msg.BloodMsg, error)
 
 	// NonPlayer returns n messages for anyone other than the given player and
 	// within the given block ID.
-	NonPlayer(playerID string, blockID, n int) ([]msg.BloodMsg, error)
+	NonPlayer(playerID string, blockID int32, n int) ([]msg.BloodMsg, error)
 
 	// Legacy returns n legacy messages within the given block ID.
-	Legacy(blockID, n int) ([]msg.BloodMsg, error)
+	Legacy(blockID int32, n int) ([]msg.BloodMsg, error)
 }

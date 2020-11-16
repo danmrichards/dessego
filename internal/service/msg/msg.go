@@ -1,33 +1,14 @@
 package msg
 
 import (
+	"bytes"
 	"encoding/binary"
 	"math"
-
-	dsmath "github.com/danmrichards/dessego/internal/math"
 )
 
 // BloodMsg represents a blood message.
-type BloodMsg struct {
-	ID           int
-	CharacterID  string
-	BlockID      int
-	PosX         float32
-	PosY         float32
-	PosZ         float32
-	AngX         float32
-	AngY         float32
-	AngZ         float32
-	MsgID        int
-	MainMsgID    int
-	AddMsgCateID int
-	Rating       int
-	Legacy       int
-}
-
-// NewBloodMsgFromBytes returns a blood parsed from the given byte slice.
 //
-// Messages expected in the format:
+// Demon's Souls exchanges messages in the following binary format:
 //
 // MessageID 		= 4 bytes
 // CharacterID 		= n bytes (terminated by a zero byte)
@@ -44,6 +25,24 @@ type BloodMsg struct {
 //   - Main message ID
 //   - Add Message Cate ID (?)
 //   - Rating
+type BloodMsg struct {
+	ID           uint32
+	CharacterID  string
+	BlockID      int32
+	PosX         float32
+	PosY         float32
+	PosZ         float32
+	AngX         float32
+	AngY         float32
+	AngZ         float32
+	MsgID        uint32
+	MainMsgID    uint32
+	AddMsgCateID uint32
+	Rating       uint32
+	Legacy       uint32
+}
+
+// NewBloodMsgFromBytes returns a blood parsed from the given byte slice.
 func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 	bm = &BloodMsg{
 		Legacy: 1,
@@ -55,7 +54,7 @@ func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 
 	// Message ID.
 	cursor := 4
-	bm.ID = int(binary.LittleEndian.Uint32(b[:cursor]))
+	bm.ID = binary.LittleEndian.Uint32(b[:cursor])
 
 	// Character ID.
 	for i := cursor; ; i++ {
@@ -67,10 +66,8 @@ func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 		bm.CharacterID += string(c)
 	}
 
-	// BlockID.
-	bm.BlockID = dsmath.MakeSignedInt(
-		int(binary.LittleEndian.Uint32(b[cursor : cursor+4])),
-	)
+	// Block ID.
+	bm.BlockID = int32(binary.LittleEndian.Uint32(b[cursor : cursor+4]))
 	cursor += 4
 
 	// Positional data.
@@ -88,19 +85,44 @@ func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 	cursor += 4
 
 	// Metadata.
-	bm.MsgID = int(binary.LittleEndian.Uint32(b[cursor : cursor+4]))
+	bm.MsgID = binary.LittleEndian.Uint32(b[cursor : cursor+4])
 	cursor += 4
-	bm.MainMsgID = int(binary.LittleEndian.Uint32(b[cursor : cursor+4]))
+	bm.MainMsgID = binary.LittleEndian.Uint32(b[cursor : cursor+4])
 	cursor += 4
-	bm.AddMsgCateID = int(binary.LittleEndian.Uint32(b[cursor : cursor+4]))
+	bm.AddMsgCateID = binary.LittleEndian.Uint32(b[cursor : cursor+4])
 	cursor += 4
-	bm.Rating = int(binary.LittleEndian.Uint32(b[cursor : cursor+4]))
+	bm.Rating = binary.LittleEndian.Uint32(b[cursor : cursor+4])
 
 	return bm, nil
 }
 
+// Bytes returns a serialised version of the message as a byte slice.
 func (bm BloodMsg) Bytes() []byte {
-	// TODO
+	data := new(bytes.Buffer)
 
-	return []byte{}
+	// Message ID.
+	binary.Write(data, binary.LittleEndian, bm.ID)
+
+	// Character ID.
+	data.WriteString(bm.CharacterID)
+	data.WriteByte(0x00)
+
+	// Block ID.
+	binary.Write(data, binary.LittleEndian, uint32(bm.BlockID))
+
+	// Positional data.
+	binary.Write(data, binary.LittleEndian, math.Float32bits(bm.PosX))
+	binary.Write(data, binary.LittleEndian, math.Float32bits(bm.PosY))
+	binary.Write(data, binary.LittleEndian, math.Float32bits(bm.PosZ))
+	binary.Write(data, binary.LittleEndian, math.Float32bits(bm.AngX))
+	binary.Write(data, binary.LittleEndian, math.Float32bits(bm.AngY))
+	binary.Write(data, binary.LittleEndian, math.Float32bits(bm.AngZ))
+
+	// Metadata.
+	binary.Write(data, binary.LittleEndian, bm.MsgID)
+	binary.Write(data, binary.LittleEndian, bm.MainMsgID)
+	binary.Write(data, binary.LittleEndian, bm.AddMsgCateID)
+	binary.Write(data, binary.LittleEndian, bm.Rating)
+
+	return data.Bytes()
 }
