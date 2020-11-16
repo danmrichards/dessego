@@ -94,3 +94,9 @@ func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 
 	return bm, nil
 }
+
+func (bm BloodMsg) Bytes() []byte {
+	// TODO
+
+	return []byte{}
+}

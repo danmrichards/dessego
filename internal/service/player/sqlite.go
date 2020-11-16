@@ -63,7 +63,6 @@ func (s *SQLiteService) DesiredTendency(id string) (dt int, err error) {
 
 // Stats returns a map of statistics for the given player.
 func (s *SQLiteService) Stats(id string) (*Stats, error) {
-	var stmt *sql.Stmt
 	stmt, err := s.db.Prepare(
 		`SELECT grade_s, grade_a, grade_b, grade_c, grade_d, sessions
 		FROM player 

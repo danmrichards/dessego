@@ -52,9 +52,146 @@ func NewSQLiteService(db *sql.DB, l zerolog.Logger, opts ...Option) (*SQLiteServ
 	return s, nil
 }
 
-// Get returns n messages for the given player and block ID.
-func (s *SQLiteService) Get(playerID string, blockID, n int) ([]BloodMsg, error) {
-	panic("implement me")
+// Player returns n messages for the given player and within the given
+// block ID.
+func (s *SQLiteService) Player(playerID string, blockID, n int) (bms []BloodMsg, err error) {
+	var stmt *sql.Stmt
+	stmt, err = s.db.Prepare(
+		`SELECT *
+		FROM message 
+		WHERE character_id = ?
+		AND block_id = ?
+		AND legacy = ?
+		ORDER BY random()
+		LIMIT ?`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("prepare select: %w", err)
+	}
+
+	var rows *sql.Rows
+	rows, err = stmt.Query(playerID, blockID, 0, n)
+	if err != nil {
+		return nil, fmt.Errorf("query rows: %w", err)
+	}
+
+	for rows.Next() {
+		var bm BloodMsg
+		if err = rows.Scan(
+			&bm.ID,
+			&bm.CharacterID,
+			&bm.BlockID,
+			&bm.PosX,
+			&bm.PosY,
+			&bm.PosZ,
+			&bm.AngX,
+			&bm.AngY,
+			&bm.AngZ,
+			&bm.MsgID,
+			&bm.MainMsgID,
+			&bm.AddMsgCateID,
+			&bm.Rating,
+			&bm.Legacy,
+		); err != nil {
+			return nil, fmt.Errorf("scan row: %w", err)
+		}
+	}
+
+	return bms, nil
+}
+
+// NonPlayer returns n messages for anyone other than the given player and
+// within the given block ID.
+func (s *SQLiteService) NonPlayer(playerID string, blockID, n int) (bms []BloodMsg, err error) {
+	var stmt *sql.Stmt
+	stmt, err = s.db.Prepare(
+		`SELECT *
+		FROM message 
+		WHERE character_id != ?
+		AND block_id = ?
+		AND legacy = ?
+		ORDER BY random()
+		LIMIT ?`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("prepare select: %w", err)
+	}
+
+	var rows *sql.Rows
+	rows, err = stmt.Query(playerID, blockID, 0, n)
+	if err != nil {
+		return nil, fmt.Errorf("query rows: %w", err)
+	}
+
+	for rows.Next() {
+		var bm BloodMsg
+		if err = rows.Scan(
+			&bm.ID,
+			&bm.CharacterID,
+			&bm.BlockID,
+			&bm.PosX,
+			&bm.PosY,
+			&bm.PosZ,
+			&bm.AngX,
+			&bm.AngY,
+			&bm.AngZ,
+			&bm.MsgID,
+			&bm.MainMsgID,
+			&bm.AddMsgCateID,
+			&bm.Rating,
+			&bm.Legacy,
+		); err != nil {
+			return nil, fmt.Errorf("scan row: %w", err)
+		}
+	}
+
+	return bms, nil
+}
+
+// Legacy returns n legacy messages within the given block ID.
+func (s *SQLiteService) Legacy(blockID, n int) (bms []BloodMsg, err error) {
+	var stmt *sql.Stmt
+	stmt, err = s.db.Prepare(
+		`SELECT *
+		FROM message 
+		WHERE block_id = ?
+		AND legacy = ?
+		ORDER BY random()
+		LIMIT ?`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("prepare select: %w", err)
+	}
+
+	var rows *sql.Rows
+	rows, err = stmt.Query(blockID, 1, n)
+	if err != nil {
+		return nil, fmt.Errorf("query rows: %w", err)
+	}
+
+	for rows.Next() {
+		var bm BloodMsg
+		if err = rows.Scan(
+			&bm.ID,
+			&bm.CharacterID,
+			&bm.BlockID,
+			&bm.PosX,
+			&bm.PosY,
+			&bm.PosZ,
+			&bm.AngX,
+			&bm.AngY,
+			&bm.AngZ,
+			&bm.MsgID,
+			&bm.MainMsgID,
+			&bm.AddMsgCateID,
+			&bm.Rating,
+			&bm.Legacy,
+		); err != nil {
+			return nil, fmt.Errorf("scan row: %w", err)
+		}
+	}
+
+	return bms, nil
 }
 
 // init initialises the database tables required by this service.

@@ -137,7 +137,7 @@ func (s *Server) characterMPGradeHandler() http.HandlerFunc {
 			return
 		}
 
-		s.l.Debug().Msgf("player %q stats %+v", mgr.CharacterID, stats)
+		s.l.Debug().Msgf("player %q stats %s", mgr.CharacterID, stats)
 
 		data := new(bytes.Buffer)
 		for _, s := range stats.Vals() {

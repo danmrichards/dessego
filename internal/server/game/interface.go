@@ -45,6 +45,14 @@ type State interface {
 // Messages is the interface that wraps methods that types must implement to be
 // used as a service for managing messages.
 type Messages interface {
-	// Get returns n messages for the given player and block ID.
-	Get(playerID string, blockID, n int) ([]msg.BloodMsg, error)
+	// Player returns n messages for the given player and within the given
+	// block ID.
+	Player(playerID string, blockID, n int) ([]msg.BloodMsg, error)
+
+	// NonPlayer returns n messages for anyone other than the given player and
+	// within the given block ID.
+	NonPlayer(playerID string, blockID, n int) ([]msg.BloodMsg, error)
+
+	// Legacy returns n legacy messages within the given block ID.
+	Legacy(blockID, n int) ([]msg.BloodMsg, error)
 }
