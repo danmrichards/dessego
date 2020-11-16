@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/danmrichards/dessego/internal/service/msg"
-
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
