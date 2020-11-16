@@ -1,5 +1,10 @@
 package game
 
+import (
+	"github.com/danmrichards/dessego/internal/service/msg"
+	"github.com/danmrichards/dessego/internal/service/player"
+)
+
 // Players is the interface that wraps methods that types must implement to be
 // used as a service for managing players.
 type Players interface {
@@ -14,7 +19,7 @@ type Players interface {
 	DesiredTendency(id string) (int, error)
 
 	// Stats returns a map of statistics for the given player.
-	Stats(id string) (map[string]int, error)
+	Stats(id string) (*player.Stats, error)
 
 	// MsgRating returns the message rating for the player with the given ID.
 	MsgRating(id string) (int, error)
@@ -35,4 +40,11 @@ type State interface {
 	// TODO: Add Ghost
 
 	// TODO: Get Ghost
+}
+
+// Messages is the interface that wraps methods that types must implement to be
+// used as a service for managing messages.
+type Messages interface {
+	// Get returns n messages for the given player and block ID.
+	Get(playerID string, blockID, n int) ([]msg.BloodMsg, error)
 }

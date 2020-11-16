@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"io"
 	"os"
 	"os/signal"
@@ -11,6 +12,7 @@ import (
 	"github.com/danmrichards/dessego/internal/server/bootstrap"
 	"github.com/danmrichards/dessego/internal/server/game"
 	"github.com/danmrichards/dessego/internal/service/gamestate"
+	"github.com/danmrichards/dessego/internal/service/msg"
 	"github.com/danmrichards/dessego/internal/service/player"
 	"github.com/danmrichards/dessego/internal/transport"
 	"github.com/rs/zerolog"
@@ -27,13 +29,20 @@ const (
 	dbPath = "./db/dessego.db"
 )
 
-var gameServers = map[string]string{
-	"US": portUS,
-	"EU": portEU,
-	"JP": portJP,
-}
+var (
+	gameServers = map[string]string{
+		"US": portUS,
+		"EU": portEU,
+		"JP": portJP,
+	}
+
+	seed bool
+)
 
 func main() {
+	flag.BoolVar(&seed, "seed", false, "Seed database tables with legacy data")
+	flag.Parse()
+
 	l := zerolog.New(os.Stdout)
 
 	db, err := database.NewSQLite(dbPath)
@@ -74,9 +83,20 @@ func main() {
 		fatal(l, err)
 	}
 
+	var mo []msg.Option
+	if seed {
+		mo = append(mo, msg.Seed())
+	}
+
+	var ms game.Messages
+	ms, err = msg.NewSQLiteService(db, l, mo...)
+	if err != nil {
+		fatal(l, err)
+	}
+
 	// Create a gamestate server for each supported region
 	for region, port := range gameServers {
-		gs, err := game.NewServer(port, rd, p, gamestate.NewMemory(), l)
+		gs, err := game.NewServer(port, rd, p, gamestate.NewMemory(), ms, l)
 		if err != nil {
 			fatal(l, err)
 		}

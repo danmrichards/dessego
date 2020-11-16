@@ -55,10 +55,11 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		// Track the player in game state.
 		s.gs.AddPlayer(ip, ucID)
 
-		cmd := 0x17
-		data := ucID + "\x00"
+		data := new(bytes.Buffer)
+		data.WriteString(ucID)
+		data.WriteByte(0x00)
 
-		if err = transport.WriteResponse(w, cmd, []byte(data)); err != nil {
+		if err = transport.WriteResponse(w, 0x17, data.Bytes()); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -139,7 +140,7 @@ func (s *Server) characterMPGradeHandler() http.HandlerFunc {
 		s.l.Debug().Msgf("player %q stats %+v", mgr.CharacterID, stats)
 
 		data := new(bytes.Buffer)
-		for _, s := range stats {
+		for _, s := range stats.Vals() {
 			binary.Write(data, binary.LittleEndian, int32(s))
 		}
 

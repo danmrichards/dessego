@@ -62,7 +62,7 @@ func (s *SQLiteService) DesiredTendency(id string) (dt int, err error) {
 }
 
 // Stats returns a map of statistics for the given player.
-func (s *SQLiteService) Stats(id string) (map[string]int, error) {
+func (s *SQLiteService) Stats(id string) (*Stats, error) {
 	var stmt *sql.Stmt
 	stmt, err := s.db.Prepare(
 		`SELECT grade_s, grade_a, grade_b, grade_c, grade_d, sessions
@@ -73,19 +73,14 @@ func (s *SQLiteService) Stats(id string) (map[string]int, error) {
 		return nil, fmt.Errorf("prepare select: %w", err)
 	}
 
-	var gs, ga, gb, gc, gd, sess int
-	if err = stmt.QueryRow(id).Scan(&gs, &ga, &gb, &gc, &gd, &sess); err != nil {
+	st := &Stats{}
+	if err = stmt.QueryRow(id).Scan(
+		&st.GradeS, &st.GradeA, &st.GradeB, &st.GradeC, &st.GradeD, &st.Sessions,
+	); err != nil {
 		return nil, fmt.Errorf("query row: %w", err)
 	}
 
-	return map[string]int{
-		"grade_s":  gs,
-		"grade_a":  ga,
-		"grade_b":  gb,
-		"grade_c":  gc,
-		"grade_d":  gd,
-		"sessions": sess,
-	}, nil
+	return st, nil
 }
 
 // MsgRating returns the message rating for the player with the given ID.
