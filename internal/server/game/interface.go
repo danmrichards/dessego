@@ -1,6 +1,8 @@
 package game
 
 import (
+	"time"
+
 	"github.com/danmrichards/dessego/internal/service/character"
 	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
@@ -63,5 +65,8 @@ type Messages interface {
 type Ghosts interface {
 	// Get returns n ghosts for anyone other than the given character and
 	// within the given block ID.
-	Get(characterID string, blockID int32, n int) []ghost.Ghost
+	Get(characterID string, blockID int32, n int) []*ghost.Ghost
+
+	// ClearBefore clears any ghosts before the given time.
+	ClearBefore(t time.Time)
 }
