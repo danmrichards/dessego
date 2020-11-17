@@ -6,15 +6,16 @@ import "time"
 type Ghost struct {
 	BlockID     int32
 	CharacterID string
-	// ReplayData (not sure of type)
-	timestamp time.Time
+	ReplayData  []byte
+	timestamp   time.Time
 }
 
 // NewGhost returns an instantiated ghost.
-func NewGhost(blockID int32, characterID string) *Ghost {
+func NewGhost(blockID int32, characterID string, replayData []byte) *Ghost {
 	return &Ghost{
 		BlockID:     blockID,
 		CharacterID: characterID,
+		ReplayData:  replayData,
 		timestamp:   time.Now(),
 	}
 }

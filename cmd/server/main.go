@@ -13,8 +13,8 @@ import (
 	"github.com/danmrichards/dessego/internal/server/game"
 	"github.com/danmrichards/dessego/internal/service/character"
 	"github.com/danmrichards/dessego/internal/service/gamestate"
+	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
-	"github.com/danmrichards/dessego/internal/transport"
 	"github.com/rs/zerolog"
 )
 
@@ -71,14 +71,12 @@ func main() {
 	}()
 
 	// Dependencies for the gamestate server.
-	var rd transport.RequestDecrypter
-	rd, err = crypto.NewDecrypter(crypto.DefaultAESKey)
+	rd, err := crypto.NewDecrypter(crypto.DefaultAESKey)
 	if err != nil {
 		fatal(l, err)
 	}
 
-	var c game.Characters
-	c, err = character.NewSQLiteService(db)
+	c, err := character.NewSQLiteService(db)
 	if err != nil {
 		fatal(l, err)
 	}
@@ -88,15 +86,16 @@ func main() {
 		mo = append(mo, msg.Seed())
 	}
 
-	var ms game.Messages
-	ms, err = msg.NewSQLiteService(db, l, mo...)
+	ms, err := msg.NewSQLiteService(db, l, mo...)
 	if err != nil {
 		fatal(l, err)
 	}
 
 	// Create a gamestate server for each supported region
 	for region, port := range gameServers {
-		gs, err := game.NewServer(port, rd, c, gamestate.NewMemory(), ms, l)
+		gs, err := game.NewServer(
+			port, rd, c, gamestate.NewMemory(), ms, ghost.NewMemory(l), l,
+		)
 		if err != nil {
 			fatal(l, err)
 		}

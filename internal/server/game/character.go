@@ -57,6 +57,7 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 
 		s.l.Debug().Msgf("character %q logged in", ucID)
 
+		// Response contains the character ID followed by a zero byte terminator.
 		data := new(bytes.Buffer)
 		data.WriteString(ucID)
 		data.WriteByte(0x00)

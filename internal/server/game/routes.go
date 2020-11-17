@@ -52,10 +52,14 @@ func (s *Server) routes() {
 	)
 
 	// Ghost routes.
-	//s.r.HandleFunc(
-	//	routePrefix+"/getWanderingGhost.spd",
-	//	middleware.LogRequest(s.l, s.getGhostHandler()),
-	//)
+	s.r.HandleFunc(
+		routePrefix+"/getWanderingGhost.spd",
+		middleware.LogRequest(s.l, s.getGhostHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/setWanderingGhost.spd",
+		middleware.LogRequest(s.l, s.setGhostHandler()),
+	)
 
 	// Blood message routes.
 	s.r.HandleFunc(

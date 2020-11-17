@@ -69,4 +69,10 @@ type Ghosts interface {
 
 	// ClearBefore clears any ghosts before the given time.
 	ClearBefore(t time.Time)
+
+	// Character returns a ghost, if it exists, for the given character.
+	Character(characterID string) (*ghost.Ghost, error)
+
+	// Set sets the ghost for the given character.
+	Set(characterID string, g *ghost.Ghost)
 }

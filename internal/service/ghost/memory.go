@@ -3,12 +3,15 @@ package ghost
 import (
 	"sync"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 // Memory is an in-memory ghost manager.
 type Memory struct {
 	ghosts   map[string]*Ghost
 	ghostAge []string
+	l        zerolog.Logger
 
 	sync.Mutex
 }
@@ -17,9 +20,10 @@ type Memory struct {
 //
 // It stores both a map of ghosts by character ID and also an ordered set of
 // ghosts by timestamp (oldest first).
-func NewMemory() *Memory {
+func NewMemory(l zerolog.Logger) *Memory {
 	return &Memory{
 		ghosts: make(map[string]*Ghost),
+		l:      l,
 	}
 }
 
@@ -56,8 +60,33 @@ func (m *Memory) ClearBefore(t time.Time) {
 			continue
 		}
 
+		m.l.Debug().Msgf(
+			"deleting stale ghost for character: %q", m.ghosts[g].CharacterID,
+		)
+
 		// Clear the ghost from the map and ordered set.
 		delete(m.ghosts, g)
 		m.ghostAge = append(m.ghostAge[:i], m.ghostAge[i+1:]...)
 	}
+}
+
+// Character returns a ghost, if it exists, for the given character.
+func (m *Memory) Character(characterID string) (*Ghost, error) {
+	m.Lock()
+	defer m.Unlock()
+
+	g, ok := m.ghosts[characterID]
+	if !ok {
+		return nil, CharacterGhostNotFoundError(characterID)
+	}
+
+	return g, nil
+}
+
+// Set sets the ghost for the given character.
+func (m *Memory) Set(characterID string, g *Ghost) {
+	m.Lock()
+	defer m.Unlock()
+
+	m.ghosts[characterID] = g
 }
