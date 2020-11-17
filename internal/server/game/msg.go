@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/danmrichards/dessego/internal/service/gamestate"
+
 	"github.com/danmrichards/dessego/internal/service/msg"
 	"github.com/danmrichards/dessego/internal/transport"
 )
@@ -74,10 +76,9 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 			msgs = append(msgs, lm...)
 		}
 
-		// TODO: Load area names into memory for nicer logging
 		s.l.Debug().Msgf(
-			"%d blood messages block: %d character: %q",
-			len(msgs), blockID, bmr.CharacterID,
+			"found %d blood messages for block: %q character: %q",
+			len(msgs), gamestate.Block(blockID), bmr.CharacterID,
 		)
 
 		// Message bytes.
@@ -86,8 +87,10 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 			mb.Write(m.Bytes())
 		}
 
+		// Response contains a header indicating the number of messages, then
+		// followed by the serialised messages themselves.
 		res := new(bytes.Buffer)
-		binary.Write(res, binary.LittleEndian, uint32(mb.Len()))
+		binary.Write(res, binary.LittleEndian, uint32(len(msgs)))
 		res.Write(mb.Bytes())
 
 		if err = transport.WriteResponse(w, 0x1f, res.Bytes()); err != nil {

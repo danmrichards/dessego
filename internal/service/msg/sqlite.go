@@ -55,6 +55,8 @@ func NewSQLiteService(db *sql.DB, l zerolog.Logger, opts ...Option) (*SQLiteServ
 // Player returns n messages for the given player and within the given
 // block ID.
 func (s *SQLiteService) Player(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
+	bms = make([]BloodMsg, 0, n)
+
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
 		`SELECT *
@@ -95,6 +97,8 @@ func (s *SQLiteService) Player(playerID string, blockID int32, n int) (bms []Blo
 		); err != nil {
 			return nil, fmt.Errorf("scan row: %w", err)
 		}
+
+		bms = append(bms, bm)
 	}
 
 	return bms, nil
@@ -103,6 +107,8 @@ func (s *SQLiteService) Player(playerID string, blockID int32, n int) (bms []Blo
 // NonPlayer returns n messages for anyone other than the given player and
 // within the given block ID.
 func (s *SQLiteService) NonPlayer(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
+	bms = make([]BloodMsg, 0, n)
+
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
 		`SELECT *
@@ -143,6 +149,8 @@ func (s *SQLiteService) NonPlayer(playerID string, blockID int32, n int) (bms []
 		); err != nil {
 			return nil, fmt.Errorf("scan row: %w", err)
 		}
+
+		bms = append(bms, bm)
 	}
 
 	return bms, nil
@@ -150,6 +158,8 @@ func (s *SQLiteService) NonPlayer(playerID string, blockID int32, n int) (bms []
 
 // Legacy returns n legacy messages within the given block ID.
 func (s *SQLiteService) Legacy(blockID int32, n int) (bms []BloodMsg, err error) {
+	bms = make([]BloodMsg, 0, n)
+
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
 		`SELECT *
@@ -189,6 +199,8 @@ func (s *SQLiteService) Legacy(blockID int32, n int) (bms []BloodMsg, err error)
 		); err != nil {
 			return nil, fmt.Errorf("scan row: %w", err)
 		}
+
+		bms = append(bms, bm)
 	}
 
 	return bms, nil
