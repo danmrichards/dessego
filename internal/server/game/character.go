@@ -37,8 +37,8 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		// Unique character ID.
 		ucID := fmt.Sprintf("%s%d", icr.CharacterID, icr.Index)
 
-		// Create the player, if it does not exist, in the DB.
-		if err = s.ps.EnsureCreate(ucID); err != nil {
+		// Create the character, if it does not exist, in the DB.
+		if err = s.cs.EnsureCreate(ucID); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -55,7 +55,7 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		// Track the player in game state.
 		s.gs.AddPlayer(ip, ucID)
 
-		s.l.Debug().Msgf("player %q logged in", ucID)
+		s.l.Debug().Msgf("character %q logged in", ucID)
 
 		data := new(bytes.Buffer)
 		data.WriteString(ucID)
@@ -85,14 +85,14 @@ func (s *Server) characterTendencyHandler() http.HandlerFunc {
 			return
 		}
 
-		ct, err := s.ps.DesiredTendency(p)
+		ct, err := s.cs.DesiredTendency(p)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		s.l.Debug().Msgf("player %q desired tendency %d", p, ct)
+		s.l.Debug().Msgf("character %q desired tendency %d", p, ct)
 
 		// No idea why this has to be written 7 times...
 		data := new(bytes.Buffer)
@@ -132,14 +132,14 @@ func (s *Server) characterMPGradeHandler() http.HandlerFunc {
 			return
 		}
 
-		stats, err := s.ps.Stats(mgr.CharacterID)
+		stats, err := s.cs.Stats(mgr.CharacterID)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		s.l.Debug().Msgf("player %q stats %s", mgr.CharacterID, stats)
+		s.l.Debug().Msgf("character %q stats %s", mgr.CharacterID, stats)
 
 		data := new(bytes.Buffer)
 		for _, s := range stats.Vals() {
@@ -176,14 +176,14 @@ func (s *Server) characterBloodMsgGradeHandler() http.HandlerFunc {
 			return
 		}
 
-		mr, err := s.ps.MsgRating(bmr.CharacterID)
+		mr, err := s.cs.MsgRating(bmr.CharacterID)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		s.l.Debug().Msgf("player %q blood msg rating %d", bmr.CharacterID, mr)
+		s.l.Debug().Msgf("character %q blood msg rating %d", bmr.CharacterID, mr)
 
 		data := new(bytes.Buffer)
 		binary.Write(data, binary.LittleEndian, int32(mr))

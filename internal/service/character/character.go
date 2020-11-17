@@ -1,8 +1,8 @@
-package player
+package character
 
 import "fmt"
 
-// Stats represents a players statistics.
+// Stats represents a characters statistics.
 type Stats struct {
 	GradeS   int
 	GradeA   int
@@ -12,7 +12,7 @@ type Stats struct {
 	Sessions int
 }
 
-// Stats returns the raw values of player stats.
+// Stats returns the raw values of character stats.
 func (s Stats) Vals() []int {
 	return []int{
 		s.GradeS, s.GradeA, s.GradeB, s.GradeC, s.GradeD, s.Sessions,

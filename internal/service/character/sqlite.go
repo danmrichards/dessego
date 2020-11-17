@@ -1,4 +1,4 @@
-package player
+package character
 
 import (
 	"database/sql"
@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 )
 
-// SQLiteService is a player service backed by a SQLite database.
+// SQLiteService is a character service backed by a SQLite database.
 type SQLiteService struct {
 	db *sql.DB
 }
 
-// NewSQLiteService returns an initialised SQLite player service.
+// NewSQLiteService returns an initialised SQLite character service.
 func NewSQLiteService(db *sql.DB) (*SQLiteService, error) {
 	s := &SQLiteService{
 		db: db,
@@ -24,31 +24,31 @@ func NewSQLiteService(db *sql.DB) (*SQLiteService, error) {
 	return s, nil
 }
 
-// EnsureCreate creates a player with the given ID and index.
+// EnsureCreate creates a character with the given ID and index.
 //
-// If a player with the given ID and index already exists, no error will
+// If a character with the given ID and index already exists, no error will
 // be returned.
 func (s *SQLiteService) EnsureCreate(id string) error {
 	stmt, err := s.db.Prepare(
-		`INSERT OR IGNORE INTO player (id) VALUES (?)`,
+		`INSERT OR IGNORE INTO character (id) VALUES (?)`,
 	)
 	if err != nil {
 		return fmt.Errorf("prepare insert: %w", err)
 	}
 
 	if _, err = stmt.Exec(id); err != nil {
-		return fmt.Errorf("create player: %w", err)
+		return fmt.Errorf("create character: %w", err)
 	}
 
 	return nil
 }
 
-// DesiredTendency returns the desired tendency for the player with the
+// DesiredTendency returns the desired tendency for the character with the
 // given ID.
 func (s *SQLiteService) DesiredTendency(id string) (dt int, err error) {
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
-		`SELECT desired_tendency FROM player WHERE id = ?`,
+		`SELECT desired_tendency FROM character WHERE id = ?`,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("prepare select: %w", err)
@@ -61,11 +61,11 @@ func (s *SQLiteService) DesiredTendency(id string) (dt int, err error) {
 	return dt, nil
 }
 
-// Stats returns a map of statistics for the given player.
+// Stats returns a map of statistics for the given character.
 func (s *SQLiteService) Stats(id string) (*Stats, error) {
 	stmt, err := s.db.Prepare(
 		`SELECT grade_s, grade_a, grade_b, grade_c, grade_d, sessions
-		FROM player 
+		FROM character
 		WHERE id = ?`,
 	)
 	if err != nil {
@@ -82,11 +82,11 @@ func (s *SQLiteService) Stats(id string) (*Stats, error) {
 	return st, nil
 }
 
-// MsgRating returns the message rating for the player with the given ID.
+// MsgRating returns the message rating for the character with the given ID.
 func (s *SQLiteService) MsgRating(id string) (mr int, err error) {
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
-		`SELECT msg_rating FROM player WHERE id = ?`,
+		`SELECT msg_rating FROM character WHERE id = ?`,
 	)
 	if err != nil {
 		return 0, fmt.Errorf("prepare select: %w", err)
@@ -101,7 +101,7 @@ func (s *SQLiteService) MsgRating(id string) (mr int, err error) {
 
 // init initialises the database tables required by this service.
 func (s *SQLiteService) init() error {
-	ddl, err := ioutil.ReadFile("internal/service/player/ddl.sql")
+	ddl, err := ioutil.ReadFile("internal/service/character/ddl.sql")
 	if err != nil {
 		return fmt.Errorf("read DDL: %w", err)
 	}

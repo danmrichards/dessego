@@ -11,9 +11,9 @@ import (
 	"github.com/danmrichards/dessego/internal/database"
 	"github.com/danmrichards/dessego/internal/server/bootstrap"
 	"github.com/danmrichards/dessego/internal/server/game"
+	"github.com/danmrichards/dessego/internal/service/character"
 	"github.com/danmrichards/dessego/internal/service/gamestate"
 	"github.com/danmrichards/dessego/internal/service/msg"
-	"github.com/danmrichards/dessego/internal/service/player"
 	"github.com/danmrichards/dessego/internal/transport"
 	"github.com/rs/zerolog"
 )
@@ -77,8 +77,8 @@ func main() {
 		fatal(l, err)
 	}
 
-	var p game.Players
-	p, err = player.NewSQLiteService(db)
+	var c game.Characters
+	c, err = character.NewSQLiteService(db)
 	if err != nil {
 		fatal(l, err)
 	}
@@ -96,7 +96,7 @@ func main() {
 
 	// Create a gamestate server for each supported region
 	for region, port := range gameServers {
-		gs, err := game.NewServer(port, rd, p, gamestate.NewMemory(), ms, l)
+		gs, err := game.NewServer(port, rd, c, gamestate.NewMemory(), ms, l)
 		if err != nil {
 			fatal(l, err)
 		}

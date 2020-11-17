@@ -45,25 +45,25 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 
 		msgs := make([]msg.BloodMsg, 0, 10)
 
-		// Player own messages.
-		pm, err := s.ms.Player(bmr.CharacterID, blockID, bmr.ReplayNum)
+		// Character own messages.
+		cm, err := s.ms.Character(bmr.CharacterID, blockID, bmr.ReplayNum)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		remaining := bmr.ReplayNum - len(pm)
-		msgs = append(msgs, pm...)
+		remaining := bmr.ReplayNum - len(cm)
+		msgs = append(msgs, cm...)
 
-		// Other player messages.
-		opm, err := s.ms.NonPlayer(bmr.CharacterID, blockID, remaining)
+		// Other character messages.
+		ocm, err := s.ms.NonCharacter(bmr.CharacterID, blockID, remaining)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		remaining -= len(opm)
-		msgs = append(msgs, opm...)
+		remaining -= len(ocm)
+		msgs = append(msgs, ocm...)
 
 		// Legacy messages.
 		if len(msgs) < legacyMessageLimit && remaining > 0 {

@@ -1,27 +1,28 @@
 package game
 
 import (
+	"github.com/danmrichards/dessego/internal/service/character"
+	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
-	"github.com/danmrichards/dessego/internal/service/player"
 )
 
-// Players is the interface that wraps methods that types must implement to be
-// used as a service for managing players.
-type Players interface {
-	// EnsureCreate creates a player with the given ID and index.
+// Characters is the interface that wraps methods that types must implement to
+// be used as a service for managing characters.
+type Characters interface {
+	// EnsureCreate creates a character with the given ID and index.
 	//
-	// If a player with the given ID and index already exists, no error will
+	// If a character with the given ID and index already exists, no error will
 	// be returned.
 	EnsureCreate(id string) error
 
-	// DesiredTendency returns the desired tendency for the player with the
+	// DesiredTendency returns the desired tendency for the character with the
 	// given ID.
 	DesiredTendency(id string) (int, error)
 
-	// Stats returns a map of statistics for the given player.
-	Stats(id string) (*player.Stats, error)
+	// Stats returns a map of statistics for the given character.
+	Stats(id string) (*character.Stats, error)
 
-	// MsgRating returns the message rating for the player with the given ID.
+	// MsgRating returns the message rating for the character with the given ID.
 	MsgRating(id string) (int, error)
 }
 
@@ -45,14 +46,22 @@ type State interface {
 // Messages is the interface that wraps methods that types must implement to be
 // used as a service for managing messages.
 type Messages interface {
-	// Player returns n messages for the given player and within the given
+	// Character returns n messages for the given character and within the given
 	// block ID.
-	Player(playerID string, blockID int32, n int) ([]msg.BloodMsg, error)
+	Character(characterID string, blockID int32, n int) ([]msg.BloodMsg, error)
 
-	// NonPlayer returns n messages for anyone other than the given player and
-	// within the given block ID.
-	NonPlayer(playerID string, blockID int32, n int) ([]msg.BloodMsg, error)
+	// NonCharacter returns n messages for anyone other than the given character
+	// and within the given block ID.
+	NonCharacter(characterID string, blockID int32, n int) ([]msg.BloodMsg, error)
 
 	// Legacy returns n legacy messages within the given block ID.
 	Legacy(blockID int32, n int) ([]msg.BloodMsg, error)
+}
+
+// Ghosts is the interface that wraps methods that types must implement to be
+// used as a service for managing messages.
+type Ghosts interface {
+	// Get returns n ghosts for anyone other than the given character and
+	// within the given block ID.
+	Get(characterID string, blockID int32, n int) []ghost.Ghost
 }

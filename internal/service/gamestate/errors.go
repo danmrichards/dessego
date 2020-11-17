@@ -6,5 +6,5 @@ import "fmt"
 type PlayerNotFoundError string
 
 func (p PlayerNotFoundError) Error() string {
-	return fmt.Sprintf("no player found with IP %q", string(p))
+	return fmt.Sprintf("no character found with IP %q", string(p))
 }

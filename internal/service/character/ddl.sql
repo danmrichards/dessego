@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS player (
+CREATE TABLE IF NOT EXISTS character (
     id TEXT PRIMARY KEY ,
     grade_s INTEGER DEFAULT 0,
     grade_a INTEGER DEFAULT 0,

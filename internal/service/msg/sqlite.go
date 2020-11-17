@@ -34,7 +34,7 @@ func Seed() Option {
 	}
 }
 
-// NewSQLiteService returns an initialised SQLite player service.
+// NewSQLiteService returns an initialised SQLite character service.
 func NewSQLiteService(db *sql.DB, l zerolog.Logger, opts ...Option) (*SQLiteService, error) {
 	s := &SQLiteService{
 		db: db,
@@ -52,9 +52,9 @@ func NewSQLiteService(db *sql.DB, l zerolog.Logger, opts ...Option) (*SQLiteServ
 	return s, nil
 }
 
-// Player returns n messages for the given player and within the given
+// Character returns n messages for the given character and within the given
 // block ID.
-func (s *SQLiteService) Player(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
+func (s *SQLiteService) Character(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
 	bms = make([]BloodMsg, 0, n)
 
 	var stmt *sql.Stmt
@@ -104,9 +104,9 @@ func (s *SQLiteService) Player(playerID string, blockID int32, n int) (bms []Blo
 	return bms, nil
 }
 
-// NonPlayer returns n messages for anyone other than the given player and
+// NonCharacter returns n messages for anyone other than the given character and
 // within the given block ID.
-func (s *SQLiteService) NonPlayer(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
+func (s *SQLiteService) NonCharacter(playerID string, blockID int32, n int) (bms []BloodMsg, err error) {
 	bms = make([]BloodMsg, 0, n)
 
 	var stmt *sql.Stmt
@@ -327,7 +327,7 @@ func (s *SQLiteService) saveMsg(tx sqlPreparer, msg *BloodMsg) error {
 		msg.Rating,
 		msg.Legacy,
 	); err != nil {
-		return fmt.Errorf("create player: %w", err)
+		return fmt.Errorf("create character: %w", err)
 	}
 
 	return nil
