@@ -62,7 +62,9 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 		data.WriteString(ucID)
 		data.WriteByte(0x00)
 
-		if err = transport.WriteResponse(w, 0x17, data.Bytes()); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseGeneric, data.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -103,7 +105,9 @@ func (s *Server) characterTendencyHandler() http.HandlerFunc {
 			}
 		}
 
-		if err = transport.WriteResponse(w, 0x0e, data.Bytes()); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseCharacterTendency, data.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -147,7 +151,9 @@ func (s *Server) characterMPGradeHandler() http.HandlerFunc {
 			binary.Write(data, binary.LittleEndian, int32(s))
 		}
 
-		if err = transport.WriteResponse(w, 0x28, data.Bytes()); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseCharacterMPGrade, data.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -189,7 +195,9 @@ func (s *Server) characterBloodMsgGradeHandler() http.HandlerFunc {
 		data := new(bytes.Buffer)
 		binary.Write(data, binary.LittleEndian, int32(mr))
 
-		if err = transport.WriteResponse(w, 0x29, data.Bytes()); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseCharacterBloodMsgGrade, data.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

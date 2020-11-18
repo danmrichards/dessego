@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/danmrichards/dessego/internal/service/ghost"
-
 	"github.com/danmrichards/dessego/internal/service/gamestate"
+	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/transport"
 	dsbase64 "github.com/danmrichards/dessego/internal/transport/encoding/base64"
 )
@@ -70,7 +69,9 @@ func (s *Server) getGhostHandler() http.HandlerFunc {
 			res.WriteString(rd)
 		}
 
-		if err = transport.WriteResponse(w, 0x11, res.Bytes()); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseGetWanderingGhost, res.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -143,7 +144,9 @@ func (s *Server) setGhostHandler() http.HandlerFunc {
 
 		s.gh.Set(sgr.CharacterID, g)
 
-		if err = transport.WriteResponse(w, 0x17, []byte{0x01}); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseGeneric, []byte{0x01},
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

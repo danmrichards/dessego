@@ -93,7 +93,9 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 		binary.Write(res, binary.LittleEndian, uint32(len(msgs)))
 		res.Write(mb.Bytes())
 
-		if err = transport.WriteResponse(w, 0x1f, res.Bytes()); err != nil {
+		if err = transport.WriteResponse(
+			w, transport.ResponseGetBloodMessage, res.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

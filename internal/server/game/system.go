@@ -25,7 +25,9 @@ func (s *Server) loginHandler() http.HandlerFunc {
 			data.WriteByte(0x00)
 		}
 
-		if err := transport.WriteResponse(w, 0x02, data.Bytes()); err != nil {
+		if err := transport.WriteResponse(
+			w, transport.ResponseLogin, data.Bytes(),
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -41,7 +43,9 @@ func (s *Server) timeMsgHandler() http.HandlerFunc {
 		// 0x02 - online service has been terminated
 		data := []byte{0x00, 0x00, 0x00}
 
-		if err := transport.WriteResponse(w, 0x22, data); err != nil {
+		if err := transport.WriteResponse(
+			w, transport.ResponseTimeMsg, data,
+		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
