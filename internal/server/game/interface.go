@@ -3,6 +3,8 @@ package game
 import (
 	"time"
 
+	"github.com/danmrichards/dessego/internal/service/replay"
+
 	"github.com/danmrichards/dessego/internal/service/character"
 	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
@@ -61,7 +63,7 @@ type Messages interface {
 }
 
 // Ghosts is the interface that wraps methods that types must implement to be
-// used as a service for managing messages.
+// used as a service for managing ghosts.
 type Ghosts interface {
 	// Get returns n ghosts for anyone other than the given character and
 	// within the given block ID.
@@ -75,4 +77,14 @@ type Ghosts interface {
 
 	// Set sets the ghost for the given character.
 	Set(characterID string, g *ghost.Ghost)
+}
+
+// Replays is the interface that wraps methods that types must implement to be
+// used as a service for managing replays.
+type Replays interface {
+	// List returns n replays for the given block ID and legacy type.
+	List(blockID int32, n int, legacy replay.LegacyType) ([]replay.Replay, error)
+
+	// Get returns a given replay.
+	Get(id uint32) (*replay.Replay, error)
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/danmrichards/dessego/internal/service/gamestate"
 	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
+	"github.com/danmrichards/dessego/internal/service/replay"
 	"github.com/rs/zerolog"
 )
 
@@ -85,8 +86,16 @@ func main() {
 	if seed {
 		mo = append(mo, msg.Seed())
 	}
-
 	ms, err := msg.NewSQLiteService(db, l, mo...)
+	if err != nil {
+		fatal(l, err)
+	}
+
+	var ro []replay.Option
+	if seed {
+		ro = append(ro, replay.Seed())
+	}
+	rs, err := replay.NewSQLiteService(db, l, ro...)
 	if err != nil {
 		fatal(l, err)
 	}
@@ -94,7 +103,7 @@ func main() {
 	// Create a gamestate server for each supported region
 	for region, port := range gameServers {
 		gs, err := game.NewServer(
-			port, rd, c, gamestate.NewMemory(), ms, ghost.NewMemory(l), l,
+			port, rd, c, gamestate.NewMemory(), ms, ghost.NewMemory(l), rs, l,
 		)
 		if err != nil {
 			fatal(l, err)

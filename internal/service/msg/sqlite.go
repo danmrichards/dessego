@@ -34,7 +34,7 @@ func Seed() Option {
 	}
 }
 
-// NewSQLiteService returns an initialised SQLite character service.
+// NewSQLiteService returns an initialised SQLite messages service.
 func NewSQLiteService(db *sql.DB, l zerolog.Logger, opts ...Option) (*SQLiteService, error) {
 	s := &SQLiteService{
 		db: db,
@@ -327,7 +327,7 @@ func (s *SQLiteService) saveMsg(tx sqlPreparer, msg *BloodMsg) error {
 		msg.Rating,
 		msg.Legacy,
 	); err != nil {
-		return fmt.Errorf("create character: %w", err)
+		return fmt.Errorf("save message: %w", err)
 	}
 
 	return nil

@@ -81,20 +81,16 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 			len(msgs), gamestate.Block(blockID), bmr.CharacterID,
 		)
 
-		// Message bytes.
-		mb := new(bytes.Buffer)
-		for _, m := range msgs {
-			mb.Write(m.Bytes())
-		}
-
 		// Response contains a header indicating the number of messages, then
 		// followed by the serialised messages themselves.
 		res := new(bytes.Buffer)
 		binary.Write(res, binary.LittleEndian, uint32(len(msgs)))
-		res.Write(mb.Bytes())
+		for _, m := range msgs {
+			res.Write(m.Bytes())
+		}
 
 		if err = transport.WriteResponse(
-			w, transport.ResponseGetBloodMessage, res.Bytes(),
+			w, transport.ResponseListData, res.Bytes(),
 		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)

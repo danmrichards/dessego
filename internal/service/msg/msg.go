@@ -42,7 +42,7 @@ type BloodMsg struct {
 	Legacy       uint32
 }
 
-// NewBloodMsgFromBytes returns a blood parsed from the given byte slice.
+// NewBloodMsgFromBytes returns a blood message parsed from the given byte slice.
 func NewBloodMsgFromBytes(b []byte) (bm *BloodMsg, err error) {
 	bm = &BloodMsg{
 		Legacy: 1,

@@ -24,10 +24,20 @@ type Server struct {
 	gs State
 	ms Messages
 	gh Ghosts
+	rs Replays
 }
 
 // NewServer returns a gamestate server configured to run on the given host and port.
-func NewServer(port string, rd transport.RequestDecrypter, cs Characters, gs State, ms Messages, gh Ghosts, l zerolog.Logger) (s *Server, err error) {
+func NewServer(
+	port string,
+	rd transport.RequestDecrypter,
+	cs Characters,
+	gs State,
+	ms Messages,
+	gh Ghosts,
+	rs Replays,
+	l zerolog.Logger,
+) (s *Server, err error) {
 	s = &Server{
 		r:  http.NewServeMux(),
 		rd: rd,
@@ -36,6 +46,7 @@ func NewServer(port string, rd transport.RequestDecrypter, cs Characters, gs Sta
 		ms: ms,
 		gh: gh,
 		l:  l,
+		rs: rs,
 	}
 
 	addr := net.JoinHostPort("", port)

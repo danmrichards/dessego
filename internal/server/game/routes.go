@@ -66,4 +66,14 @@ func (s *Server) routes() {
 		routePrefix+"/getBloodMessage.spd",
 		middleware.LogRequest(s.l, s.getBloodMsgHandler()),
 	)
+
+	// Replay routes.
+	s.r.HandleFunc(
+		routePrefix+"/getReplayList.spd",
+		middleware.LogRequest(s.l, s.replayListHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/getReplayData.spd",
+		middleware.LogRequest(s.l, s.replayDataHandler()),
+	)
 }
