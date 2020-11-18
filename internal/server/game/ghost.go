@@ -51,19 +51,24 @@ func (s *Server) getGhostHandler() http.HandlerFunc {
 		// Clear out stale ghosts to ensure up to date replays.
 		s.gh.ClearBefore(time.Now().Add(-maxGhostAge))
 
-		g := s.gh.Get(ggr.CharacterID, blockID, ggr.MaxGhosts)
+		gs := s.gh.Get(ggr.CharacterID, blockID, ggr.MaxGhosts)
 		s.l.Debug().Msgf(
 			"found %d ghosts for block: %q character: %q",
-			len(g), gamestate.Block(blockID), ggr.CharacterID,
+			len(gs), gamestate.Block(blockID), ggr.CharacterID,
 		)
 
 		// Response contains a header indicating the number of ghosts, followed
 		// by the ghost replay data itself.
 		res := new(bytes.Buffer)
 		binary.Write(res, binary.LittleEndian, uint32(0))
-		binary.Write(res, binary.LittleEndian, uint32(len(g)))
+		binary.Write(res, binary.LittleEndian, uint32(len(gs)))
 
-		// TODO: Encode replay data.
+		// Encode the replays.
+		for _, g := range gs {
+			rd := dsbase64.StdEncoding.EncodeToString(g.ReplayData)
+			binary.Write(res, binary.LittleEndian, uint32(len(rd)))
+			res.WriteString(rd)
+		}
 
 		if err = transport.WriteResponse(w, 0x11, res.Bytes()); err != nil {
 			s.l.Err(err).Msg("")

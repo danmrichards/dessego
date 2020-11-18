@@ -47,7 +47,7 @@ func (e *Encoding) DecodeString(s string) ([]byte, error) {
 	}
 
 	// Fix the ending.
-	switch len(s) % 4 {
+	switch sb.Len() % 4 {
 	case 3:
 		sb.WriteString("=")
 	case 2:
@@ -57,4 +57,13 @@ func (e *Encoding) DecodeString(s string) ([]byte, error) {
 	}
 
 	return base64.StdEncoding.DecodeString(sb.String())
+}
+
+// EncodeToString returns the base64 encoding of src.
+//
+// It wraps the standard library EncodeToString method while altering the
+// encoded values to the broken versions that Demon's Souls expects.
+func (e *Encoding) EncodeToString(src []byte) string {
+	s := base64.StdEncoding.EncodeToString(src)
+	return strings.Replace(s, "+", " ", -1)
 }
