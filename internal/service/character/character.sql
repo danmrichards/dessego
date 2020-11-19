@@ -6,6 +6,5 @@ CREATE TABLE IF NOT EXISTS character (
     grade_c INTEGER DEFAULT 0,
     grade_d INTEGER DEFAULT 0,
     sessions INTEGER DEFAULT 0,
-    msg_rating INTEGER DEFAULT 0,
-    desired_tendency INTEGER DEFAULT 0
-)
+    msg_rating INTEGER DEFAULT 0
+);

@@ -1,6 +1,7 @@
 package character
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"io/ioutil"
@@ -29,18 +30,34 @@ func NewSQLiteService(db *sql.DB) (*SQLiteService, error) {
 // If a character with the given ID and index already exists, no error will
 // be returned.
 func (s *SQLiteService) EnsureCreate(id string) error {
-	stmt, err := s.db.Prepare(
+	tx, err := s.db.BeginTx(context.Background(), nil)
+	if err != nil {
+		return fmt.Errorf("being transaction: %w", err)
+	}
+
+	// Main character data.
+	stmt, err := tx.Prepare(
 		`INSERT OR IGNORE INTO character (id) VALUES (?)`,
 	)
 	if err != nil {
 		return fmt.Errorf("prepare insert: %w", err)
 	}
-
 	if _, err = stmt.Exec(id); err != nil {
 		return fmt.Errorf("create character: %w", err)
 	}
 
-	return nil
+	// World Tendency.
+	stmt, err = tx.Prepare(
+		`INSERT OR IGNORE INTO world_tendency (character_id) VALUES (?)`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare insert: %w", err)
+	}
+	if _, err = stmt.Exec(id); err != nil {
+		return fmt.Errorf("create character: %w", err)
+	}
+
+	return tx.Commit()
 }
 
 // DesiredTendency returns the desired tendency for the character with the
@@ -101,7 +118,17 @@ func (s *SQLiteService) MsgRating(id string) (mr int, err error) {
 
 // init initialises the database tables required by this service.
 func (s *SQLiteService) init() error {
-	ddl, err := ioutil.ReadFile("internal/service/character/ddl.sql")
+	for _, t := range []string{"character", "world_tendency"} {
+		if err := s.initTable(t); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *SQLiteService) initTable(table string) error {
+	ddl, err := ioutil.ReadFile("internal/service/character/" + table + ".sql")
 	if err != nil {
 		return fmt.Errorf("read DDL: %w", err)
 	}

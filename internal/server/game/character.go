@@ -98,6 +98,7 @@ func (s *Server) characterTendencyHandler() http.HandlerFunc {
 		s.l.Debug().Msgf("character %q desired tendency %d", p, ct)
 
 		// No idea why this has to be written 7 times...
+		// TODO: Return real world tendency data here instead.
 		data := new(bytes.Buffer)
 		for i := 0; i < 7; i++ {
 			for j := range []int32{int32(ct), 0} {
@@ -107,6 +108,60 @@ func (s *Server) characterTendencyHandler() http.HandlerFunc {
 
 		if err = transport.WriteResponse(
 			w, transport.ResponseCharacterTendency, data.Bytes(),
+		); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func (s *Server) addCharacterTendencyHandler() http.HandlerFunc {
+	type addCharacterTendencyReq struct {
+		CharacterID string `form:"characterID"`
+		Area1       int    `form:"area1"`
+		WB1         int    `form:"wb1"`
+		LR1         int    `form:"lr1"`
+		Area2       int    `form:"area2"`
+		WB2         int    `form:"wb2"`
+		LR2         int    `form:"lr2"`
+		Area3       int    `form:"area3"`
+		WB3         int    `form:"wb3"`
+		LR3         int    `form:"lr3"`
+		Area4       int    `form:"area4"`
+		WB4         int    `form:"wb4"`
+		LR4         int    `form:"lr4"`
+		Area5       int    `form:"area5"`
+		WB5         int    `form:"wb5"`
+		LR5         int    `form:"lr5"`
+		Area6       int    `form:"area6"`
+		WB6         int    `form:"wb6"`
+		LR6         int    `form:"lr6"`
+		Area7       int    `form:"area7"`
+		WB7         int    `form:"wb7"`
+		LR7         int    `form:"lr7"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		var atr addCharacterTendencyReq
+		if err = transport.DecodeRequest(s.rd, b, &atr); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// TODO: Save character world tendency
+
+		if err = transport.WriteResponse(
+			w, transport.ResponseAddQWCData, []byte{0x01},
 		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -43,6 +43,10 @@ func (s *Server) routes() {
 		middleware.LogRequest(s.l, s.characterTendencyHandler()),
 	)
 	s.r.HandleFunc(
+		routePrefix+"/addQWCData.spd",
+		middleware.LogRequest(s.l, s.addCharacterTendencyHandler()),
+	)
+	s.r.HandleFunc(
 		routePrefix+"/getMultiPlayGrade.spd",
 		middleware.LogRequest(s.l, s.characterMPGradeHandler()),
 	)
