@@ -70,6 +70,18 @@ func (s *Server) routes() {
 		routePrefix+"/getBloodMessage.spd",
 		middleware.LogRequest(s.l, s.getBloodMsgHandler()),
 	)
+	s.r.HandleFunc(
+		routePrefix+"/addBloodMessage.spd",
+		middleware.LogRequest(s.l, s.addBloodMsgHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/deleteBloodMessage.spd",
+		middleware.LogRequest(s.l, s.deleteBloodMsgHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/updateBloodMessageGrade.spd",
+		middleware.LogRequest(s.l, s.updateBloodMsgGradeHandler()),
+	)
 
 	// Replay routes.
 	s.r.HandleFunc(

@@ -30,6 +30,10 @@ type Characters interface {
 
 	// MsgRating returns the message rating for the character with the given ID.
 	MsgRating(id string) (int, error)
+
+	// UpdateMsgRating updates the message rating for the character with the
+	// given ID.
+	UpdateMsgRating(id string) error
 }
 
 // State is the interface that wraps methods that types must implement to be
@@ -43,10 +47,6 @@ type State interface {
 
 	// Player returns the ID of a player with the given IP address
 	Player(ip string) (string, error)
-
-	// TODO: Add Ghost
-
-	// TODO: Get Ghost
 }
 
 // Messages is the interface that wraps methods that types must implement to be
@@ -62,6 +62,18 @@ type Messages interface {
 
 	// Legacy returns n legacy messages within the given block ID.
 	Legacy(blockID int32, n int) ([]msg.BloodMsg, error)
+
+	// Add adds a new message.
+	Add(bm msg.BloodMsg) error
+
+	// Delete deletes the message with the given ID.
+	Delete(id int) error
+
+	// Get returns the message with the given ID.
+	Get(id int) (*msg.BloodMsg, error)
+
+	// UpdateRating updates the rating for the message with the given ID.
+	UpdateRating(id int) error
 }
 
 // Ghosts is the interface that wraps methods that types must implement to be

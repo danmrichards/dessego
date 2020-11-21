@@ -3,7 +3,12 @@ package msg
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"math"
+	"strconv"
+	"strings"
+
+	"github.com/danmrichards/dessego/internal/service/gamestate"
 )
 
 // BloodMsg represents a blood message.
@@ -125,4 +130,39 @@ func (bm BloodMsg) Bytes() []byte {
 	binary.Write(data, binary.LittleEndian, bm.Rating)
 
 	return data.Bytes()
+}
+
+// String implements fmt.Stringer.
+func (bm BloodMsg) String() string {
+	// Find the main/outer message.
+	mm, ok := gamestate.Messages[int(bm.MainMsgID)]
+	if ok {
+		// Find the detail/inner message.
+		m, ok := gamestate.Messages[int(bm.MsgID)]
+		if !ok {
+			m = strconv.Itoa(int(bm.MsgID))
+		}
+
+		// Replace the placeholder with details.
+		mm = strings.Replace(mm, "***", m, -1)
+
+		return fmt.Sprintf(
+			"id: %d block: %q character: %q message: %q rating: %d",
+			bm.ID,
+			gamestate.Block(bm.BlockID),
+			bm.CharacterID,
+			mm,
+			bm.Rating,
+		)
+	}
+
+	return fmt.Sprintf(
+		"id: %d block: %q character: %q message id: %q main message id: %q rating: %d",
+		bm.ID,
+		gamestate.Block(bm.BlockID),
+		bm.CharacterID,
+		bm.MsgID,
+		bm.MainMsgID,
+		bm.Rating,
+	)
 }

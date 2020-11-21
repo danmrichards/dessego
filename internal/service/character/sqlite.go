@@ -170,6 +170,23 @@ func (s *SQLiteService) MsgRating(id string) (mr int, err error) {
 	return mr, nil
 }
 
+// UpdateMsgRating updates the message rating for the character with the
+// given ID.
+func (s *SQLiteService) UpdateMsgRating(id string) error {
+	stmt, err := s.db.Prepare(
+		`UPDATE character SET msg_rating = msg_rating + 1 WHERE id = ?`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare query: %w", err)
+	}
+
+	if _, err = stmt.Exec(id); err != nil {
+		return fmt.Errorf("update message rating: %w", err)
+	}
+
+	return nil
+}
+
 // init initialises the database tables required by this service.
 func (s *SQLiteService) init() error {
 	for _, t := range []string{"character", "world_tendency"} {

@@ -206,6 +206,110 @@ func (s *SQLiteService) Legacy(blockID int32, n int) (bms []BloodMsg, err error)
 	return bms, nil
 }
 
+// Add adds a new message.
+func (s *SQLiteService) Add(bm BloodMsg) error {
+	stmt, err := s.db.Prepare(
+		`INSERT OR IGNORE INTO message (
+			character_id,
+			block_id,
+			posx,
+			posy,
+			posz,
+			angx,
+			angy,
+			angz,
+			msg_id,
+			main_msg_id,
+			add_msg_cate_id
+		) VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare insert: %w", err)
+	}
+
+	if _, err = stmt.Exec(
+		bm.CharacterID,
+		bm.BlockID,
+		bm.PosX,
+		bm.PosY,
+		bm.PosZ,
+		bm.AngX,
+		bm.AngY,
+		bm.AngZ,
+		bm.MsgID,
+		bm.MainMsgID,
+		bm.AddMsgCateID,
+	); err != nil {
+		return fmt.Errorf("add message: %w", err)
+	}
+
+	return nil
+}
+
+// Delete deletes the message with the given ID.
+func (s *SQLiteService) Delete(id int) error {
+	stmt, err := s.db.Prepare(
+		`DELETE FROM message WHERE id = ?`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare query: %w", err)
+	}
+
+	if _, err = stmt.Exec(id); err != nil {
+		return fmt.Errorf("delete message: %w", err)
+	}
+
+	return nil
+}
+
+// Get returns the message with the given ID.
+func (s *SQLiteService) Get(id int) (*BloodMsg, error) {
+	stmt, err := s.db.Prepare(
+		`SELECT * FROM message WHERE id = ?`,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("prepare select: %w", err)
+	}
+
+	bm := &BloodMsg{}
+	if err = stmt.QueryRow(id).Scan(
+		&bm.ID,
+		&bm.CharacterID,
+		&bm.BlockID,
+		&bm.PosX,
+		&bm.PosY,
+		&bm.PosZ,
+		&bm.AngX,
+		&bm.AngY,
+		&bm.AngZ,
+		&bm.MsgID,
+		&bm.MainMsgID,
+		&bm.AddMsgCateID,
+		&bm.Rating,
+		&bm.Legacy,
+	); err != nil {
+		return nil, fmt.Errorf("query row: %w", err)
+	}
+
+	return bm, nil
+}
+
+// UpdateRating updates the rating for the message with the given ID.
+func (s *SQLiteService) UpdateRating(id int) error {
+	stmt, err := s.db.Prepare(
+		`UPDATE message SET rating = rating + 1 WHERE id = ?`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare query: %w", err)
+	}
+
+	if _, err = stmt.Exec(id); err != nil {
+		return fmt.Errorf("update message rating: %w", err)
+	}
+
+	return nil
+}
+
 // init initialises the database tables required by this service.
 func (s *SQLiteService) init() error {
 	if err := s.initTable(); err != nil {
