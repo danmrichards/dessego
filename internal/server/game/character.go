@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/danmrichards/dessego/internal/service/character"
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
@@ -72,39 +73,54 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 	}
 }
 
-func (s *Server) characterTendencyHandler() http.HandlerFunc {
+func (s *Server) worldTendencyHandler() http.HandlerFunc {
+	type worldTendencyReq struct {
+		MaxNum  int `form:"maxNum"`
+		Version int `form:"ver"`
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		ip, _, err := net.SplitHostPort(r.RemoteAddr)
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		var ctr worldTendencyReq
+		if err = transport.DecodeRequest(s.rd, b, &ctr); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		wts, err := s.cs.WorldTendency(ctr.MaxNum)
 		if err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		p, err := s.gs.Player(ip)
-		if err != nil {
-			s.l.Err(err).Msg("")
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
+		avg := averageWorldTendency(wts)
 
-		ct, err := s.cs.DesiredTendency(p)
-		if err != nil {
-			s.l.Err(err).Msg("")
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+		s.l.Debug().Msgf("current average world tendency: %q", avg)
 
-		s.l.Debug().Msgf("character %q desired tendency %d", p, ct)
-
-		// No idea why this has to be written 7 times...
-		// TODO: Return real world tendency data here instead.
 		data := new(bytes.Buffer)
-		for i := 0; i < 7; i++ {
-			for j := range []int32{int32(ct), 0} {
-				binary.Write(data, binary.LittleEndian, j)
-			}
-		}
+		binary.Write(data, binary.LittleEndian, avg.WB1)
+		binary.Write(data, binary.LittleEndian, avg.LR1)
+		binary.Write(data, binary.LittleEndian, avg.WB2)
+		binary.Write(data, binary.LittleEndian, avg.LR2)
+		binary.Write(data, binary.LittleEndian, avg.WB3)
+		binary.Write(data, binary.LittleEndian, avg.LR3)
+		binary.Write(data, binary.LittleEndian, avg.WB4)
+		binary.Write(data, binary.LittleEndian, avg.LR4)
+		binary.Write(data, binary.LittleEndian, avg.WB5)
+		binary.Write(data, binary.LittleEndian, avg.LR5)
+		binary.Write(data, binary.LittleEndian, avg.WB6)
+		binary.Write(data, binary.LittleEndian, avg.LR6)
+		binary.Write(data, binary.LittleEndian, avg.WB7)
+		binary.Write(data, binary.LittleEndian, avg.LR7)
 
 		if err = transport.WriteResponse(
 			w, transport.ResponseCharacterTendency, data.Bytes(),
@@ -116,8 +132,8 @@ func (s *Server) characterTendencyHandler() http.HandlerFunc {
 	}
 }
 
-func (s *Server) addCharacterTendencyHandler() http.HandlerFunc {
-	type addCharacterTendencyReq struct {
+func (s *Server) addWorldTendencyHandler() http.HandlerFunc {
+	type addWorldTendencyReq struct {
 		CharacterID string `form:"characterID"`
 		Area1       int    `form:"area1"`
 		WB1         int    `form:"wb1"`
@@ -151,14 +167,42 @@ func (s *Server) addCharacterTendencyHandler() http.HandlerFunc {
 		}
 		defer r.Body.Close()
 
-		var atr addCharacterTendencyReq
+		var atr addWorldTendencyReq
 		if err = transport.DecodeRequest(s.rd, b, &atr); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		// TODO: Save character world tendency
+		wt := character.WorldTendency{
+			Area1: atr.Area1,
+			WB1:   atr.WB1,
+			LR1:   atr.LR1,
+			Area2: atr.Area2,
+			WB2:   atr.WB2,
+			LR2:   atr.LR2,
+			Area3: atr.Area3,
+			WB3:   atr.WB3,
+			LR3:   atr.LR3,
+			Area4: atr.Area4,
+			WB4:   atr.WB4,
+			LR4:   atr.LR4,
+			Area5: atr.Area5,
+			WB5:   atr.WB5,
+			LR5:   atr.LR5,
+			Area6: atr.Area6,
+			WB6:   atr.WB6,
+			LR6:   atr.LR6,
+			Area7: atr.Area7,
+			WB7:   atr.WB7,
+			LR7:   atr.LR7,
+		}
+
+		if err = s.cs.SetTendency(atr.CharacterID, wt); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		if err = transport.WriteResponse(
 			w, transport.ResponseAddQWCData, []byte{0x01},
@@ -258,4 +302,31 @@ func (s *Server) characterBloodMsgGradeHandler() http.HandlerFunc {
 			return
 		}
 	}
+}
+
+func averageWorldTendency(wts []character.WorldTendency) character.WorldTendency {
+	at := character.WorldTendency{}
+	n := len(wts)
+	if n == 0 {
+		return at
+	}
+
+	for _, wt := range wts {
+		at.WB1 += wt.WB1
+		at.WB2 += wt.WB2
+		at.WB3 += wt.WB3
+		at.WB4 += wt.WB4
+		at.WB5 += wt.WB5
+		at.WB6 += wt.WB6
+		at.WB7 += wt.WB7
+	}
+	at.WB1 /= n
+	at.WB2 /= n
+	at.WB3 /= n
+	at.WB4 /= n
+	at.WB5 /= n
+	at.WB6 /= n
+	at.WB7 /= n
+
+	return at
 }

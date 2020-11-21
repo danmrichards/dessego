@@ -19,9 +19,11 @@ type Characters interface {
 	// be returned.
 	EnsureCreate(id string) error
 
-	// DesiredTendency returns the desired tendency for the character with the
-	// given ID.
-	DesiredTendency(id string) (int, error)
+	// WorldTendency returns a maximum of n world tendency entries.
+	WorldTendency(n int) ([]character.WorldTendency, error)
+
+	// SetTendency sets the world tendency for the character with the given ID.
+	SetTendency(id string, wt character.WorldTendency) error
 
 	// Stats returns a map of statistics for the given character.
 	Stats(id string) (*character.Stats, error)

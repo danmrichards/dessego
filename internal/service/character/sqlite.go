@@ -1,7 +1,6 @@
 package character
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"io/ioutil"
@@ -30,13 +29,7 @@ func NewSQLiteService(db *sql.DB) (*SQLiteService, error) {
 // If a character with the given ID and index already exists, no error will
 // be returned.
 func (s *SQLiteService) EnsureCreate(id string) error {
-	tx, err := s.db.BeginTx(context.Background(), nil)
-	if err != nil {
-		return fmt.Errorf("being transaction: %w", err)
-	}
-
-	// Main character data.
-	stmt, err := tx.Prepare(
+	stmt, err := s.db.Prepare(
 		`INSERT OR IGNORE INTO character (id) VALUES (?)`,
 	)
 	if err != nil {
@@ -46,36 +39,97 @@ func (s *SQLiteService) EnsureCreate(id string) error {
 		return fmt.Errorf("create character: %w", err)
 	}
 
-	// World Tendency.
-	stmt, err = tx.Prepare(
-		`INSERT OR IGNORE INTO world_tendency (character_id) VALUES (?)`,
-	)
-	if err != nil {
-		return fmt.Errorf("prepare insert: %w", err)
-	}
-	if _, err = stmt.Exec(id); err != nil {
-		return fmt.Errorf("create character: %w", err)
-	}
-
-	return tx.Commit()
+	return nil
 }
 
-// DesiredTendency returns the desired tendency for the character with the
-// given ID.
-func (s *SQLiteService) DesiredTendency(id string) (dt int, err error) {
+// WorldTendency returns a maximum of n world tendency entries.
+func (s *SQLiteService) WorldTendency(n int) (wts []WorldTendency, err error) {
+	wts = make([]WorldTendency, 0, n)
+
 	var stmt *sql.Stmt
 	stmt, err = s.db.Prepare(
-		`SELECT desired_tendency FROM character WHERE id = ?`,
+		`SELECT area_1, wb_1, lr_1,
+       	area_2, wb_2, lr_2,
+		area_3, wb_3, lr_3,
+		area_4, wb_4, lr_4,
+		area_5, wb_5, lr_5,
+		area_6, wb_6, lr_6,
+		area_7, wb_7, lr_7
+		FROM world_tendency
+		ORDER BY id DESC
+		LIMIT ?`,
 	)
 	if err != nil {
-		return 0, fmt.Errorf("prepare select: %w", err)
+		return nil, fmt.Errorf("prepare select: %w", err)
 	}
 
-	if err = stmt.QueryRow(id).Scan(&dt); err != nil {
-		return 0, fmt.Errorf("query row: %w", err)
+	var rows *sql.Rows
+	rows, err = stmt.Query(n)
+	if err != nil {
+		return nil, fmt.Errorf("query rows: %w", err)
 	}
 
-	return dt, nil
+	for rows.Next() {
+		var wt WorldTendency
+		if err = rows.Scan(
+			&wt.Area1, &wt.WB1, &wt.LR1,
+			&wt.Area2, &wt.WB2, &wt.LR2,
+			&wt.Area3, &wt.WB3, &wt.LR3,
+			&wt.Area4, &wt.WB4, &wt.LR4,
+			&wt.Area5, &wt.WB5, &wt.LR5,
+			&wt.Area6, &wt.WB6, &wt.LR6,
+			&wt.Area7, &wt.WB7, &wt.LR7,
+		); err != nil {
+			return nil, fmt.Errorf("query row: %w", err)
+		}
+
+		wts = append(wts, wt)
+	}
+
+	return wts, nil
+}
+
+// SetTendency sets the world tendency for the character with the given ID.
+func (s *SQLiteService) SetTendency(id string, wt WorldTendency) error {
+	stmt, err := s.db.Prepare(
+		`INSERT INTO world_tendency (
+            character_id,
+			area_1, wb_1, lr_1, 
+		    area_2, wb_2, lr_2,
+		    area_3, wb_3, lr_3,
+			area_4, wb_4, lr_4,
+			area_5, wb_5, lr_5,
+			area_6, wb_6, lr_6,
+			area_7, wb_7, lr_7
+		) VALUES (
+		    ?,
+			?, ?, ?,
+			?, ?, ?,
+			?, ?, ?,
+			?, ?, ?,
+			?, ?, ?,
+			?, ?, ?,
+			?, ?, ?
+		)`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare update: %w", err)
+	}
+
+	if _, err := stmt.Exec(
+		id,
+		wt.Area1, wt.WB1, wt.LR1,
+		wt.Area2, wt.WB2, wt.LR2,
+		wt.Area3, wt.WB3, wt.LR3,
+		wt.Area4, wt.WB4, wt.LR4,
+		wt.Area5, wt.WB5, wt.LR5,
+		wt.Area6, wt.WB6, wt.LR6,
+		wt.Area7, wt.WB7, wt.LR7,
+	); err != nil {
+		return fmt.Errorf("update row: %w", err)
+	}
+
+	return nil
 }
 
 // Stats returns a map of statistics for the given character.
