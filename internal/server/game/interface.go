@@ -3,11 +3,11 @@ package game
 import (
 	"time"
 
-	"github.com/danmrichards/dessego/internal/service/replay"
-
 	"github.com/danmrichards/dessego/internal/service/character"
 	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
+	"github.com/danmrichards/dessego/internal/service/replay"
+	"github.com/danmrichards/dessego/internal/service/sos"
 )
 
 // Characters is the interface that wraps methods that types must implement to
@@ -101,4 +101,11 @@ type Replays interface {
 
 	// Get returns a given replay.
 	Get(id uint32) (*replay.Replay, error)
+}
+
+// SOS is the interface that wraps methods that types must implement to be used
+// as a service for managing SOS data.
+type SOS interface {
+	// Get returns n SOS entries, from the requested list in the given block.
+	Get(blockID int32, n int) []sos.SOS
 }

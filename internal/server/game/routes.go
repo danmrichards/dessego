@@ -92,4 +92,10 @@ func (s *Server) routes() {
 		routePrefix+"/getReplayData.spd",
 		middleware.LogRequest(s.l, s.replayDataHandler()),
 	)
+
+	// SOS routes.
+	s.r.HandleFunc(
+		routePrefix+"/getSosData.spd",
+		middleware.LogRequest(s.l, s.getSosDataHandler()),
+	)
 }

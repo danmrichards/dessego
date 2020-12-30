@@ -16,6 +16,7 @@ import (
 	"github.com/danmrichards/dessego/internal/service/ghost"
 	"github.com/danmrichards/dessego/internal/service/msg"
 	"github.com/danmrichards/dessego/internal/service/replay"
+	"github.com/danmrichards/dessego/internal/service/sos"
 	"github.com/rs/zerolog"
 )
 
@@ -103,7 +104,15 @@ func main() {
 	// Create a gamestate server for each supported region
 	for region, port := range gameServers {
 		gs, err := game.NewServer(
-			port, rd, c, gamestate.NewMemory(), ms, ghost.NewMemory(l), rs, l,
+			port,
+			rd,
+			c,
+			gamestate.NewMemory(),
+			ms,
+			ghost.NewMemory(l),
+			rs,
+			sos.NewManager(l),
+			l,
 		)
 		if err != nil {
 			fatal(l, err)
