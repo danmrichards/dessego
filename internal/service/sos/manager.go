@@ -1,14 +1,17 @@
 package sos
 
 import (
+	"sync"
 	"time"
 
 	"github.com/rs/zerolog"
 )
 
 type Manager struct {
-	active []SOS
+	active map[string]SOS
 	l      zerolog.Logger
+
+	sync.Mutex
 }
 
 // NewManager returns an instantiated SOS manager.
@@ -20,14 +23,17 @@ func NewManager(l zerolog.Logger) *Manager {
 
 // Get returns n SOS entries in the given block.
 func (m *Manager) Get(blockID int32, n int) []SOS {
+	m.Lock()
+	defer m.Unlock()
+
 	var (
 		found int
 		sos   = make([]SOS, 0, n)
 	)
-	for i, a := range m.active {
+	for cid, a := range m.active {
 		if a.Updated.Add(maxSOSAge).Before(time.Now()) {
 			m.l.Info().Msgf("deleted SOS %q due to inactivity", a.ID)
-			m.active = append(m.active[:i], m.active[i+1:]...)
+			delete(m.active, cid)
 			continue
 		} else if a.BlockID != blockID {
 			// Only include SOS for the given block.
@@ -42,4 +48,12 @@ func (m *Manager) Get(blockID int32, n int) []SOS {
 	}
 
 	return sos
+}
+
+// Delete deletes the SOS for a given character.
+func (m *Manager) Delete(characterID string) {
+	m.Lock()
+	defer m.Unlock()
+
+	delete(m.active, characterID)
 }

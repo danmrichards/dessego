@@ -8,9 +8,11 @@ var (
 	ResponseAddQWCData             ResponseType = 0x09
 	ResponseCharacterTendency      ResponseType = 0x0e
 	ResponseGetWanderingGhost      ResponseType = 0x11
+	ResponseOutOfBlock             ResponseType = 0x15
 	ResponseGeneric                ResponseType = 0x17
-	ResponseAddBloodMsg            ResponseType = 0x1d
+	ResponseAddData                ResponseType = 0x1d
 	ResponseReplayData             ResponseType = 0x1e
+	ResponseGetSOSData             ResponseType = 0x0f
 	ResponseListData               ResponseType = 0x1f
 	ResponseUpdateMsgGrade         ResponseType = 0x2a
 	ResponseTimeMsg                ResponseType = 0x22

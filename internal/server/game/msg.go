@@ -153,7 +153,7 @@ func (s *Server) addBloodMsgHandler() http.HandlerFunc {
 		s.l.Debug().Msgf("added new message %q", bm)
 
 		if err = transport.WriteResponse(
-			w, transport.ResponseAddBloodMsg, []byte{0x01},
+			w, transport.ResponseAddData, []byte{0x01},
 		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)

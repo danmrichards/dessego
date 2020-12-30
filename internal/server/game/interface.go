@@ -101,6 +101,9 @@ type Replays interface {
 
 	// Get returns a given replay.
 	Get(id uint32) (*replay.Replay, error)
+
+	// Add adds a new replay.
+	Add(r *replay.Replay) error
 }
 
 // SOS is the interface that wraps methods that types must implement to be used
@@ -108,4 +111,7 @@ type Replays interface {
 type SOS interface {
 	// Get returns n SOS entries, from the requested list in the given block.
 	Get(blockID int32, n int) []sos.SOS
+
+	// Delete deletes the SOS for a given character.
+	Delete(characterID string)
 }

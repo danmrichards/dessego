@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/rs/zerolog"
 )
@@ -137,6 +138,11 @@ func (s *SQLiteService) Get(id uint32) (r *Replay, err error) {
 	return r, nil
 }
 
+// Add adds a new replay.
+func (s *SQLiteService) Add(r *Replay) error {
+	return s.saveReplay(s.db, r)
+}
+
 // init initialises the database tables required by this service.
 func (s *SQLiteService) init() error {
 	if err := s.initTable(); err != nil {
@@ -220,30 +226,22 @@ func (s *SQLiteService) doSeed() error {
 }
 
 func (s *SQLiteService) saveReplay(tx sqlPreparer, r *Replay) error {
-	stmt, err := tx.Prepare(
-		`INSERT OR IGNORE INTO replay (
-			id,
-			character_id,
-			block_id,
-			posx,
-			posy,
-			posz,
-			angx,
-			angy,
-			angz,
-			msg_id,
-			main_msg_id,
-			add_msg_cate_id,
-			data,
-			legacy
-		) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
-	)
-	if err != nil {
-		return fmt.Errorf("prepare insert: %w", err)
+	cols := []string{
+		"character_id",
+		"block_id",
+		"posx",
+		"posy",
+		"posz",
+		"angx",
+		"angy",
+		"angz",
+		"msg_id",
+		"main_msg_id",
+		"add_msg_cate_id",
+		"data",
+		"legacy",
 	}
-
-	if _, err = stmt.Exec(
-		r.ID,
+	vals := []interface{}{
 		r.CharacterID,
 		r.BlockID,
 		r.PosX,
@@ -257,7 +255,38 @@ func (s *SQLiteService) saveReplay(tx sqlPreparer, r *Replay) error {
 		r.AddMsgCateID,
 		r.Data,
 		r.Legacy,
-	); err != nil {
+	}
+
+	// Leverage the auto increment for replays with no ID.
+	if r.ID > 0 {
+		cols = append([]string{"id"}, cols...)
+		vals = append([]interface{}{r.ID}, vals...)
+	}
+
+	var qb strings.Builder
+	qb.WriteString("INSERT OR IGNORE INTO replay (")
+	for i, c := range cols {
+		qb.WriteString(c)
+		if i < len(cols)-1 {
+			qb.WriteString(",")
+		}
+	}
+
+	qb.WriteString(") VALUES (")
+	for i := 0; i < len(vals); i++ {
+		qb.WriteString("?")
+		if i < len(vals)-1 {
+			qb.WriteString(",")
+		}
+	}
+	qb.WriteString(")")
+
+	stmt, err := tx.Prepare(qb.String())
+	if err != nil {
+		return fmt.Errorf("prepare insert: %w", err)
+	}
+
+	if _, err = stmt.Exec(vals...); err != nil {
 		return fmt.Errorf("save replay: %w", err)
 	}
 

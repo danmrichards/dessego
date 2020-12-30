@@ -82,7 +82,41 @@ func (s *Server) getSosDataHandler() http.HandlerFunc {
 		}
 
 		if err = transport.WriteResponse(
-			w, transport.ResponseListData, res.Bytes(),
+			w, transport.ResponseGetSOSData, res.Bytes(),
+		); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func (s *Server) outOfBlockHandler() http.HandlerFunc {
+	type outOfBlockReq struct {
+		CharacterID string `form:"characterID"`
+		Version     int    `form:"ver"`
+	}
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		var obr outOfBlockReq
+		if err = transport.DecodeRequest(s.rd, b, &obr); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		s.sos.Delete(obr.CharacterID)
+
+		if err = transport.WriteResponse(
+			w, transport.ResponseOutOfBlock, []byte{0x01},
 		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)

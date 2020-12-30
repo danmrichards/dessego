@@ -13,6 +13,41 @@ import (
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
+type addReplayDataReq struct {
+	CharacterID  string  `form:"characterID"`
+	BlockID      uint32  `form:"blockID"`
+	PosX         float32 `form:"posx"`
+	PosY         float32 `form:"posy"`
+	PosZ         float32 `form:"posz"`
+	AngX         float32 `form:"angx"`
+	AngY         float32 `form:"angy"`
+	AngZ         float32 `form:"angz"`
+	MsgID        uint32  `form:"messageID"`
+	MainMsgID    uint32  `form:"mainMsgID"`
+	AddMsgCateID uint32  `form:"addMsgCateID"`
+	Data         string  `form:"replayBinary"`
+}
+
+func (a addReplayDataReq) ToReplay() *replay.Replay {
+	return &replay.Replay{
+		CharacterID:  a.CharacterID,
+		PosX:         a.PosX,
+		PosY:         a.PosY,
+		PosZ:         a.PosZ,
+		AngX:         a.AngX,
+		AngY:         a.AngY,
+		AngZ:         a.AngZ,
+		MsgID:        a.MsgID,
+		MainMsgID:    a.MainMsgID,
+		AddMsgCateID: a.AddMsgCateID,
+		Data:         []byte(a.Data),
+
+		// Demon's Souls doesn't send signed integers for block IDs for some
+		// reason. Coerce it.
+		BlockID: int32(a.BlockID),
+	}
+}
+
 func (s *Server) replayListHandler() http.HandlerFunc {
 	type replayListReq struct {
 		BlockID   uint32 `form:"blockID"`
@@ -62,7 +97,7 @@ func (s *Server) replayListHandler() http.HandlerFunc {
 		rs = append(rs, lr...)
 
 		s.l.Debug().Msgf(
-			"found %d replays for block: %q", len(lr), gamestate.Block(blockID),
+			"found %d replays for block: %q", len(rs), gamestate.Block(blockID),
 		)
 
 		// Response contains a header indicating the number of replays, then
@@ -83,7 +118,7 @@ func (s *Server) replayListHandler() http.HandlerFunc {
 	}
 }
 
-func (s *Server) replayDataHandler() http.HandlerFunc {
+func (s *Server) getReplayDataHandler() http.HandlerFunc {
 	type replayDataReq struct {
 		GhostID uint32 `form:"ghostID"`
 		Version int    `form:"ver"`
@@ -126,6 +161,42 @@ func (s *Server) replayDataHandler() http.HandlerFunc {
 
 		if err = transport.WriteResponse(
 			w, transport.ResponseReplayData, res.Bytes(),
+		); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func (s *Server) addReplayDataHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		b, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer r.Body.Close()
+
+		var adr addReplayDataReq
+		if err = transport.DecodeRequest(s.rd, b, &adr); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		nr := adr.ToReplay()
+		if err = s.rs.Add(nr); err != nil {
+			s.l.Err(err).Msg("")
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		s.l.Debug().Msgf("added new replay replay %s", nr)
+
+		if err = transport.WriteResponse(
+			w, transport.ResponseAddData, []byte{0x01},
 		); err != nil {
 			s.l.Err(err).Msg("")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
