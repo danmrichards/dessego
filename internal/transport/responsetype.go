@@ -6,6 +6,8 @@ type ResponseType int
 var (
 	ResponseLogin                  ResponseType = 0x02
 	ResponseAddQWCData             ResponseType = 0x09
+	ResponseAddSOSData             ResponseType = 0x0a
+	ResponseCheckSOSData           ResponseType = 0x0b
 	ResponseCharacterTendency      ResponseType = 0x0e
 	ResponseGetWanderingGhost      ResponseType = 0x11
 	ResponseOutOfBlock             ResponseType = 0x15

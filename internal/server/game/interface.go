@@ -110,8 +110,15 @@ type Replays interface {
 // as a service for managing SOS data.
 type SOS interface {
 	// Get returns n SOS entries, from the requested list in the given block.
-	Get(blockID int32, n int) []sos.SOS
+	Get(blockID int32, n int) []*sos.SOS
+
+	// Add adds a new SOS.
+	Add(s *sos.SOS)
 
 	// Delete deletes the SOS for a given character.
 	Delete(characterID string)
+
+	// Check checks for a matching player to fulfill an SOS and returns the ID
+	// of the room for the match.
+	Check(characterID string) string
 }

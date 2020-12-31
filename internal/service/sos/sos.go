@@ -27,10 +27,10 @@ type SOS struct {
 	PlayerInfo    string
 	QWCWB         uint32
 	QWCLR         uint32
-	Black         bool
+	Black         byte
 	PlayerLevel   uint32
-	Ratings       []uint32
-	TotalSessions uint32
+	Ratings       []int
+	TotalSessions int
 	Updated       time.Time
 }
 
@@ -82,11 +82,8 @@ func (s SOS) Bytes() []byte {
 	binary.Write(data, binary.LittleEndian, s.QWCWB)
 	binary.Write(data, binary.LittleEndian, s.QWCLR)
 
-	if s.Black {
-		binary.Write(data, binary.LittleEndian, byte(1))
-	} else {
-		binary.Write(data, binary.LittleEndian, byte(0))
-	}
+	// Black phantom.
+	binary.Write(data, binary.LittleEndian, s.Black)
 
 	return data.Bytes()
 }

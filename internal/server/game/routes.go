@@ -103,6 +103,14 @@ func (s *Server) routes() {
 		middleware.LogRequest(s.l, s.getSosDataHandler()),
 	)
 	s.r.HandleFunc(
+		routePrefix+"/addSosData.spd",
+		middleware.LogRequest(s.l, s.addSosDataHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/checkSosData.spd",
+		middleware.LogRequest(s.l, s.checkSosDataHandler()),
+	)
+	s.r.HandleFunc(
 		routePrefix+"/outOfBlock.spd",
 		middleware.LogRequest(s.l, s.outOfBlockHandler()),
 	)
