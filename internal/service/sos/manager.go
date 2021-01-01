@@ -7,9 +7,11 @@ import (
 	"github.com/rs/zerolog"
 )
 
+var monkBlockIDs = []int32{40070, 40071, 40072, 40073, 40074, 40170, 40171, 40172, 40270}
+
 // Manager is an in-memory SOS management service.
 type Manager struct {
-	index uint32
+	index int32
 
 	// Active SOS requests.
 	active map[string]*SOS
@@ -33,8 +35,8 @@ func NewManager(l zerolog.Logger) *Manager {
 	}
 }
 
-// Get returns n SOS entries in the given block.
-func (m *Manager) Get(blockID int32, n int) []*SOS {
+// List returns n SOS entries in the given block.
+func (m *Manager) List(blockID int32, n int) []*SOS {
 	m.Lock()
 	defer m.Unlock()
 
@@ -107,16 +109,50 @@ func (m *Manager) Check(characterID string) string {
 	}
 
 	return ""
-	//if characterID in self.monkPending[serverport]:
-	//logging.info("Summoning for monk player %r" % characterID)
-	//data = self.monkPending[serverport][characterID]
-	//del self.monkPending[serverport][characterID]
-	//
-	//elif characterID in self.playerPending:
-	//logging.info("Connecting player %r" % characterID)
-	//data = self.playerPending[characterID]
-	//del self.playerPending[characterID]
-	//
-	//else:
-	//data = "\x00"
+}
+
+// Summon returns true if the given SOS ID was able to be summoned.
+func (m *Manager) Summon(id int32, room string) bool {
+	m.Lock()
+	defer m.Unlock()
+
+	for _, a := range m.active {
+		if a.ID == id {
+			m.pending[a.CharacterID] = room
+			m.l.Info().Msgf(
+				"added pending summon for character %q in room %q",
+				a.CharacterID,
+				room,
+			)
+			return true
+		}
+	}
+
+	return false
+}
+
+// Monk returns true if a monk was able to be summoned to the given room.
+func (m *Manager) Monk(room string) bool {
+	m.Lock()
+	defer m.Unlock()
+
+	for _, a := range m.active {
+		if monkBlock(a.BlockID) {
+			m.monks[a.CharacterID] = room
+			m.l.Info().Msgf("added pending request for monk in room %q", room)
+			return true
+		}
+	}
+
+	return false
+}
+
+func monkBlock(id int32) bool {
+	for _, mb := range monkBlockIDs {
+		if id == mb {
+			return true
+		}
+	}
+
+	return false
 }

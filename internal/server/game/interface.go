@@ -34,6 +34,13 @@ type Characters interface {
 	// UpdateMsgRating updates the message rating for the character with the
 	// given ID.
 	UpdateMsgRating(id string) error
+
+	// InitMultiplayer initialises a multiplayer session for the given
+	// characterID.
+	InitMultiplayer(id string) error
+
+	// UpdatePlayerGrade updates the given player with the given grade.
+	UpdatePlayerGrade(id string, grade character.MultiplayerGrade) error
 }
 
 // State is the interface that wraps methods that types must implement to be
@@ -109,8 +116,8 @@ type Replays interface {
 // SOS is the interface that wraps methods that types must implement to be used
 // as a service for managing SOS data.
 type SOS interface {
-	// Get returns n SOS entries, from the requested list in the given block.
-	Get(blockID int32, n int) []*sos.SOS
+	// List returns n SOS entries, from the requested list in the given block.
+	List(blockID int32, n int) []*sos.SOS
 
 	// Add adds a new SOS.
 	Add(s *sos.SOS)
@@ -121,4 +128,11 @@ type SOS interface {
 	// Check checks for a matching player to fulfill an SOS and returns the ID
 	// of the room for the match.
 	Check(characterID string) string
+
+	// Summon returns true if the given SOS ID was able to be summoned to the
+	// given room.
+	Summon(id int32, room string) bool
+
+	// Monk returns true if a monk was able to be summoned to the given room.
+	Monk(room string) bool
 }

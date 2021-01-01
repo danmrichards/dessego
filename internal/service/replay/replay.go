@@ -108,7 +108,6 @@ func NewReplayFromBytes(b []byte) (r *Replay, err error) {
 	for i := cursor; ; i++ {
 		c := b[i : i+1][0]
 		if c == 0x00 {
-			cursor = i + 1
 			break
 		}
 		r.Data = append(r.Data, c)

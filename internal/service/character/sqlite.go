@@ -187,6 +187,39 @@ func (s *SQLiteService) UpdateMsgRating(id string) error {
 	return nil
 }
 
+// InitMultiplayer initialises a multiplayer session for the given
+// characterID.
+func (s *SQLiteService) InitMultiplayer(id string) error {
+	stmt, err := s.db.Prepare(
+		`UPDATE character SET sessions = sessions + 1 WHERE id = ?`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare query: %w", err)
+	}
+
+	if _, err = stmt.Exec(id); err != nil {
+		return fmt.Errorf("update message rating: %w", err)
+	}
+
+	return nil
+}
+
+// UpdatePlayerGrade updates the given player with the given grade.
+func (s *SQLiteService) UpdatePlayerGrade(id string, grade MultiplayerGrade) error {
+	stmt, err := s.db.Prepare(
+		`UPDATE character SET ? = ? + 1 WHERE id = ?`,
+	)
+	if err != nil {
+		return fmt.Errorf("prepare query: %w", err)
+	}
+
+	if _, err = stmt.Exec(grade, grade, id); err != nil {
+		return fmt.Errorf("update message rating: %w", err)
+	}
+
+	return nil
+}
+
 // init initialises the database tables required by this service.
 func (s *SQLiteService) init() error {
 	for _, t := range []string{"character", "world_tendency"} {

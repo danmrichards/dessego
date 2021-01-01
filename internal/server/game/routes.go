@@ -111,7 +111,29 @@ func (s *Server) routes() {
 		middleware.LogRequest(s.l, s.checkSosDataHandler()),
 	)
 	s.r.HandleFunc(
+		routePrefix+"/summonOtherCharacter.spd",
+		middleware.LogRequest(s.l, s.summonCharacterHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/summonBlackGhost.spd",
+		middleware.LogRequest(s.l, s.summonBlackGhostHandler()),
+	)
+
+	// Multiplayer routes.
+	s.r.HandleFunc(
 		routePrefix+"/outOfBlock.spd",
 		middleware.LogRequest(s.l, s.outOfBlockHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/initializeMultiPlay.spd",
+		middleware.LogRequest(s.l, s.initMultiplayHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/finalizeMultiPlay.spd",
+		middleware.LogRequest(s.l, s.finaliseMultiplayHandler()),
+	)
+	s.r.HandleFunc(
+		routePrefix+"/updateOtherPlayerGrade.spd",
+		middleware.LogRequest(s.l, s.updateOtherPlayerGradeHandler()),
 	)
 }

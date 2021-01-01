@@ -2,6 +2,38 @@ package character
 
 import "fmt"
 
+// MultiplayerGrade is a string representation of a Multiplayer grade.
+type MultiplayerGrade string
+
+const (
+	// GradeS is the S grade.
+	GradeS MultiplayerGrade = "grade_s"
+
+	// Grade A is the A grade.
+	GradeA MultiplayerGrade = "grade_a"
+
+	// GradeB is the B grade.
+	GradeB MultiplayerGrade = "grade_b"
+
+	// GradeC is the C grade.
+	GradeC MultiplayerGrade = "grade_c"
+
+	// GradeD is the D grade.
+	GradeD MultiplayerGrade = "grade_d"
+
+	// GradeUnknown is the unknown grade.
+	GradeUnknown MultiplayerGrade = "grade_unknown"
+)
+
+// Grades is a list of valid multiplayer grades and their integer key.
+var Grades = map[int]MultiplayerGrade{
+	0: GradeS,
+	1: GradeA,
+	2: GradeB,
+	3: GradeC,
+	4: GradeD,
+}
+
 // Stats represents a characters statistics.
 type Stats struct {
 	GradeS   int

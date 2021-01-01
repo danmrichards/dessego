@@ -12,7 +12,7 @@ const maxSOSAge = time.Second * 30
 
 // SOS represents a Demon's Souls SOS.
 type SOS struct {
-	ID            uint32
+	ID            int32
 	CharacterID   string
 	BlockID       int32
 	PosX          float32
@@ -38,7 +38,7 @@ func (s SOS) Bytes() []byte {
 	data := new(bytes.Buffer)
 
 	// Message ID.
-	binary.Write(data, binary.LittleEndian, s.ID)
+	binary.Write(data, binary.LittleEndian, uint32(s.ID))
 
 	// Character ID.
 	data.WriteString(s.CharacterID)
