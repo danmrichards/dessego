@@ -11,6 +11,7 @@ import (
 // Clearly, they were very security conscious...
 const DefaultAESKey = "11111111222222223333333344444444"
 
+// Decrypter is an AEA request decrypter.
 type Decrypter struct {
 	c cipher.Block
 }

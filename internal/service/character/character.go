@@ -9,7 +9,7 @@ const (
 	// GradeS is the S grade.
 	GradeS MultiplayerGrade = "grade_s"
 
-	// Grade A is the A grade.
+	// GradeA is the A grade.
 	GradeA MultiplayerGrade = "grade_a"
 
 	// GradeB is the B grade.
@@ -44,7 +44,7 @@ type Stats struct {
 	Sessions int
 }
 
-// Stats returns the raw values of character stats.
+// Vals returns the raw values of character stats.
 func (s Stats) Vals() []int {
 	return []int{
 		s.GradeS, s.GradeA, s.GradeB, s.GradeC, s.GradeD, s.Sessions,

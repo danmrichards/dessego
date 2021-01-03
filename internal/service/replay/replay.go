@@ -13,7 +13,11 @@ import (
 type LegacyType int
 
 const (
+	// NonLegacy indicates a reply created by Demon's Souls interacting with
+	// this server.
 	NonLegacy LegacyType = iota
+
+	// Legacy indicates a replay imported from a legacy data dump.
 	Legacy
 )
 

@@ -34,6 +34,7 @@ type SOS struct {
 	Updated       time.Time
 }
 
+// Bytes returns a serialised version of the SOS as a byte slice.
 func (s SOS) Bytes() []byte {
 	data := new(bytes.Buffer)
 

@@ -20,10 +20,6 @@ func (e *InvalidFieldError) Error() string {
 	return fmt.Sprintf("form: invalid field %q err: %v", e.Field, e.Err)
 }
 
-func (e *InvalidFieldError) PublicError() string {
-	return fmt.Sprintf("form: invalid field %q", e.Field)
-}
-
 // InvalidParameterError indicates a parameter was passed but of an invalid type
 type InvalidParameterError struct {
 	Parameter string
@@ -63,10 +59,6 @@ func NewMissingJSONFieldError(f string) *MissingFieldError {
 }
 
 func (e *MissingFieldError) Error() string {
-	return fmt.Sprintf("%v: missing field %q", e.source, e.Field)
-}
-
-func (e *MissingFieldError) PublicError() string {
 	return fmt.Sprintf("%v: missing field %q", e.source, e.Field)
 }
 
