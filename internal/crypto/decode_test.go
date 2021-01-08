@@ -16,7 +16,7 @@ func TestDecrypter_Decrypt(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	plain := []byte("hello world")
+	plain := []byte("ver=100&characterID=foobar&index=1")
 	enc, err := testEnc(plain)
 	if err != nil {
 		t.Fatal(err)

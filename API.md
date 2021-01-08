@@ -47,19 +47,14 @@ The server uses a standard HTTP/1.1 protocol.
 
 **Request content-type:** N/A
 
-**Request body:** N/A
+**Request fields:** N/A
 
 **Response content-type:** `text/plain`
-
-**Example response:**
-```
-PHNzPjA8L3NzPgo8bGFuZzE+PC9sYW5nMT4KPGxhbmcyPjwvbGFuZzI+CjxsYW5nMz48L2xhbmczPgo8bGFuZzQ+PC9sYW5nND4KPGxhbmc1PjwvbGFuZzU+CjxsYW5nNj48L2xhbmc2Pgo8bGFuZzc+PC9sYW5nNz4KPGxhbmc4PjwvbGFuZzg+CjxsYW5nMTE+PC9sYW5nMTE+CjxsYW5nMTI+PC9sYW5nMTI+CjxnYW1ldXJsMT5odHRwOi8vMTI3LjAuMC4xOjE4NjY2L2NnaS1iaW4vPC9nYW1ldXJsMT4KPGdhbWV1cmwyPmh0dHA6Ly8xMjcuMC4wLjE6MTg2NjcvY2dpLWJpbi88L2dhbWV1cmwyPgo8Z2FtZXVybDM+aHR0cDovLzEyNy4wLjAuMToxODY2OC9jZ2ktYmluLzwvZ2FtZXVybDM+CjxnYW1ldXJsND5odHRwOi8vMTI3LjAuMC4xOjE4NjY4L2NnaS1iaW4vPC9nYW1ldXJsND4KPGdhbWV1cmw1Pmh0dHA6Ly8xMjcuMC4wLjE6MTg2NjcvY2dpLWJpbi88L2dhbWV1cmw1Pgo8Z2FtZXVybDY+aHR0cDovLzEyNy4wLjAuMToxODY2Ny9jZ2ktYmluLzwvZ2FtZXVybDY+CjxnYW1ldXJsNz5odHRwOi8vMTI3LjAuMC4xOjE4NjY3L2NnaS1iaW4vPC9nYW1ldXJsNz4KPGdhbWV1cmw4Pmh0dHA6Ly8xMjcuMC4wLjE6MTg2NjcvY2dpLWJpbi88L2dhbWV1cmw4Pgo8Z2FtZXVybDExPmh0dHA6Ly8xMjcuMC4wLjE6MTg2NjgvY2dpLWJpbi88L2dhbWV1cmwxMT4KPGdhbWV1cmwxMj5odHRwOi8vMTI3LjAuMC4xOjE4NjY4L2NnaS1iaW4vPC9nYW1ldXJsMTI+Cjxicm93c2VydXJsMT48L2Jyb3dzZXJ1cmwxPgo8YnJvd3NlcnVybDI+PC9icm93c2VydXJsMj4KPGJyb3dzZXJ1cmwzPjwvYnJvd3NlcnVybDM+CjxpbnRlcnZhbDE+MTIwPC9pbnRlcnZhbDE+CjxpbnRlcnZhbDI+MTIwPC9pbnRlcnZhbDI+CjxpbnRlcnZhbDM+MTIwPC9pbnRlcnZhbDM+CjxpbnRlcnZhbDQ+MTIwPC9pbnRlcnZhbDQ+CjxpbnRlcnZhbDU+MTIwPC9pbnRlcnZhbDU+CjxpbnRlcnZhbDY+MTIwPC9pbnRlcnZhbDY+CjxpbnRlcnZhbDc+MTIwPC9pbnRlcnZhbDc+CjxpbnRlcnZhbDg+MTIwPC9pbnRlcnZhbDg+CjxpbnRlcnZhbDExPjEyMDwvaW50ZXJ2YWwxMT4KPGludGVydmFsMTI+MTIwPC9pbnRlcnZhbDEyPgo8Z2V0V2FuZGVyaW5nR2hvc3RJbnRlcnZhbD4yMDwvZ2V0V2FuZGVyaW5nR2hvc3RJbnRlcnZhbD4KPHNldFdhbmRlcmluZ0dob3N0SW50ZXJ2YWw+MjA8L3NldFdhbmRlcmluZ0dob3N0SW50ZXJ2YWw+CjxnZXRCbG9vZE1lc3NhZ2VOdW0+ODA8L2dldEJsb29kTWVzc2FnZU51bT4KPGdldFJlcGxheUxpc3ROdW0+ODA8L2dldFJlcGxheUxpc3ROdW0+CjxlbmFibGVXYW5kZXJpbmdHaG9zdD4xPC9lbmFibGVXYW5kZXJpbmdHaG9zdD4=
-```
 
 **Response fields:**
 
 | Field | Description |
-| --- | ----------- |
+| :--- | :--- |
 | `ss` | Unknown. Observed to be `0` |
 | `lang1` | Unknown |
 | `lang2` | Unknown |
@@ -90,3 +85,107 @@ PHNzPjA8L3NzPgo8bGFuZzE+PC9sYW5nMT4KPGxhbmcyPjwvbGFuZzI+CjxsYW5nMz48L2xhbmczPgo8
 | `getBloodMessageNum` | Number of blood messages to retrieve, observed at `80` |
 | `getReplayListNum` | Number of replays to retrieve, observed at `80` |
 | `enableWanderingGhost` | Pseudo-boolean (1 or 0) indicating if wandering ghosts are enabled |
+
+## Game Server
+The Demon's Souls game server is responsible for handling interactions with the
+game client to power it's asynchronous multiplayer functionality. Persistent
+storage is used to store data for player characters, replays and messages left
+in the game world.
+
+### Transport
+The server uses a standard HTTP/1.1 protocol.
+
+### Request
+Demon's Souls makes API requests using standard HTTP verbs (e.g. POST) but with
+encrypted contents. The body of an API request is an AES encrypted representation
+of an HTTP form POST. Requests are encrypted using the AES key `11111111222222223333333344444444`
+
+As an example, first imagine a POST body like so:
+
+```
+ver=100&characterID=foobar&index=1
+```
+
+The game client would then need to AES encrypt this using the known key. This
+encryption method works using blocks (16 bytes in size), as a result the raw
+value may need to be padded to the next whole block (i.e. the length must be a
+multiple of the block size). As a result, when decrypting the POST body into set
+of HTTP url params, you may see a trailing ampersand.
+
+### Response
+Responses sent back from the server to the game client are not encrypted. Instead,
+they are base64 encoded byte sequences. It should also be noted that the byte
+sequence is expected to be followed by a new line character, otherwise the
+game client cannot parse it.
+
+The format of the byte sequence in a server response is as follows:
+
+| 0            | 1 .. 4      | 5 .. n |
+| :----------- | :---------- | :----- |
+| Command flag | Data length | Data   |
+
+The command flag is a single byte that indicates to the game client the type
+of response being returned.
+
+### Endpoints
+
+All response fields here are contained in the `Data` section of the response
+byte sequence. Byte ordering is shown from `0` but in reality starts from `5`
+in the real response.
+
+#### Login
+**Path:** `/cgi-bin/login.spd`
+
+**Description:** Logs a new client into the server
+
+**Request content-type:** N/A
+
+**Request fields:** N/A
+
+**Response content-type:** `text/plain`
+
+**Response fields:**
+
+| Field | Description |
+| :--- | :--- |
+| Status | Status of the server. Possible values:<br>0x00 - present EULA, create account<br>0x01 - present MOTD, can be multiple<br>0x02 - "Your account is currently suspended"<br>0x03 - "Your account has been banned."<br>0x05 - undergoing maintenance<br>0x06 - online service has been terminated<br>0x07 - network play cannot be used with this version |
+| Data | Dependent on the status. In the message-of-the-data case, contains the encoded message string |
+
+#### Time
+**Path:** `/cgi-bin/getTimeMessage.spd`
+
+**Description:** Get a time message from the server
+
+**Request content-type:** N/A
+
+**Request fields:** N/A
+
+**Response content-type:** `text/plain`
+
+**Response fields:**
+
+Unknown
+
+#### Initialise character
+**Path:** `/cgi-bin/initializeCharacter.spd`
+
+**Description:** Initialises a new character
+
+**Request content-type:** N/A
+
+**Request fields:**
+
+| Field | Description |
+| :--- | :--- |
+| `characterID` | ID of the new character |
+| `index` | Character index, allows for multiple characters on the same client |
+| `ver` | Game client version |
+
+**Response content-type:** `text/plain`
+
+**Response fields:**
+
+| Field | Description |
+| :--- | :--- |
+| Character ID | ID of the created character |
+| Terminator | Termination byte (0x00) |
