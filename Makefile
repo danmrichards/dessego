@@ -12,4 +12,7 @@ deps:
 	go mod tidy && \
 	go mod vendor
 
+docs:
+	swagger generate spec -m -o swagger.yaml
+
 .PHONY: pkg build lint deps
