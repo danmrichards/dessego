@@ -40,7 +40,7 @@ The server uses a standard HTTP/1.1 protocol.
 
 ### Endpoints
 
-See the [swagger][swagger.yaml] file in the root of this repo, under the
+See the [swagger](swagger.yaml) file in the root of this repo, under the
 "boostrap" section.
 
 ## Game Server
@@ -86,7 +86,7 @@ of response being returned.
 
 ### Endpoints
 
-See the [swagger][swagger.yaml] file in the root of this repo, ignoring the
+See the [swagger](swagger.yaml) file in the root of this repo, ignoring the
 "boostrap" section.
 
 A caveat of this swagger file is that the request bodies are not representative
