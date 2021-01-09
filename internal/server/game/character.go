@@ -12,7 +12,31 @@ import (
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
+// swagger:operation POST /cgi-bin/initializeCharacter.spd initializeCharacter
+//
+// Initialises a new character and persists it for future reference
+//
+// ---
+// summary: Initialises a new character
+// tags:
+// - "character"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/initCharacterReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) initCharacterHandler() http.HandlerFunc {
+	// swagger:model initCharacterReq
 	type initCharacterReq struct {
 		CharacterID string `form:"characterID"`
 		Index       int    `form:"index"`
@@ -73,7 +97,31 @@ func (s *Server) initCharacterHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getQWCData.spd getQWCData
+//
+// Returns the currently stored world tendency data for a given character
+//
+// ---
+// summary: Get world tendency
+// tags:
+// - "character"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/worldTendencyReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) worldTendencyHandler() http.HandlerFunc {
+	// swagger:model worldTendencyReq
 	type worldTendencyReq struct {
 		MaxNum  int `form:"maxNum"`
 		Version int `form:"ver"`
@@ -132,7 +180,31 @@ func (s *Server) worldTendencyHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/addWorldTendencyHandler.spd addWorldTendencyHandler
+//
+// Updates the currently stored world tendency data for a given character
+//
+// ---
+// summary: Add world tendency
+// tags:
+// - "character"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/addWorldTendencyReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) addWorldTendencyHandler() http.HandlerFunc {
+	// swagger:model addWorldTendencyReq
 	type addWorldTendencyReq struct {
 		CharacterID string `form:"characterID"`
 		Area1       int    `form:"area1"`
@@ -214,7 +286,31 @@ func (s *Server) addWorldTendencyHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getMultiPlayGrade.spd getMultiPlayGrade
+//
+// Gets the current multiplayer grade for a character, used when matchmaking
+//
+// ---
+// summary: Get multiplayer grade
+// tags:
+// - "character"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/multiplayerGradeReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) characterMPGradeHandler() http.HandlerFunc {
+	// swagger:model multiplayerGradeReq
 	type multiplayerGradeReq struct {
 		CharacterID string `form:"NPID"`
 		Version     int    `form:"ver"`
@@ -260,7 +356,31 @@ func (s *Server) characterMPGradeHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getBloodMessageGrade.spd getBloodMessageGrade
+//
+// Gets the current blood message grade for a character
+//
+// ---
+// summary: Get blood message grade
+// tags:
+// - "character"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/bloodMsgGradeReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) characterBloodMsgGradeHandler() http.HandlerFunc {
+	// swagger:model bloodMsgGradeReq
 	type bloodMsgGradeReq struct {
 		CharacterID string `form:"NPID"`
 		Version     int    `form:"ver"`

@@ -17,7 +17,31 @@ import (
 // TODO: Configurable?
 const maxGhostAge = 30 * time.Second
 
+// swagger:operation POST /cgi-bin/getWanderingGhost.spd getWanderingGhost
+//
+// Returns a list of wandering ghosts (replays) within a given area of the game
+//
+// ---
+// summary: Get wandering ghost
+// tags:
+// - "ghost"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/getGhostReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) getGhostHandler() http.HandlerFunc {
+	// swagger:model getGhostReq
 	type getGhostReq struct {
 		Version     int      `form:"ver"`
 		CharacterID string   `form:"characterID"`
@@ -79,7 +103,31 @@ func (s *Server) getGhostHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/setWanderingGhost.spd setWanderingGhost
+//
+// Stores wandering ghost (replay) data for the current player
+//
+// ---
+// summary: Set wandering ghost
+// tags:
+// - "ghost"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/setGhostReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) setGhostHandler() http.HandlerFunc {
+	// swagger:model setGhostReq
 	type setGhostReq struct {
 		CharacterID  string  `form:"characterID"`
 		GhostBlockID uint32  `form:"ghostBlockID"`

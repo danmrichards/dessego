@@ -13,6 +13,20 @@ type bootstrapData struct {
 	// TODO: Configure other bootstrap elements
 }
 
+// swagger:operation GET / bootstrap
+//
+// Returns a base64 encoded XML document to configure the game client for
+// multiplayer.
+//
+// ---
+// summary: Bootstrap the game client
+// tags:
+// - "bootstrap"
+// produces:
+// - text/plain
+// responses:
+//   '200':
+//     description: successful operation
 func (s *Server) bootstrapHandler() http.HandlerFunc {
 	tpl := template.Must(template.ParseFiles("internal/server/bootstrap/res.tpl"))
 

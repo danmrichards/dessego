@@ -14,6 +14,7 @@ import (
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
+// swagger:model addSosDataReq
 type addSosDataReq struct {
 	CharacterID  string  `form:"characterID"`
 	BlockID      uint32  `form:"blockID"`
@@ -59,7 +60,31 @@ func (a addSosDataReq) ToSos() *sos.SOS {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getSosData.spd getSosDataHandler
+//
+// Returns a list of SOS messages for a given area of the game
+//
+// ---
+// summary: Get SOS message
+// tags:
+// - "sos"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/getSosDataReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) getSosDataHandler() http.HandlerFunc {
+	// swagger:model getSosDataReq
 	type getSosDataReq struct {
 		BlockID        uint32 `form:"blockID"`
 		MaxSOSNum      int    `form:"maxSosNum"`
@@ -138,6 +163,29 @@ func (s *Server) getSosDataHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/addSosData.spd addSosDataHandler
+//
+// Adds an SOS message for a given character
+//
+// ---
+// summary: Add SOS message
+// tags:
+// - "sos"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/addSosDataReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) addSosDataHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
@@ -181,7 +229,32 @@ func (s *Server) addSosDataHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/checkSosData.spd checkSosDataHandler
+//
+// Checks for a matching SOS for the given character, part of the matchmaking
+// process.
+//
+// ---
+// summary: Check SOS message
+// tags:
+// - "sos"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/checkSosDataReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) checkSosDataHandler() http.HandlerFunc {
+	// swagger:model checkSosDataReq
 	type checkSosDataReq struct {
 		CharacterID string `form:"characterID"`
 		Version     int    `form:"ver"`
@@ -220,7 +293,32 @@ func (s *Server) checkSosDataHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/summonOtherCharacter.spd summonCharacterHandler
+//
+// Summon another character to assist via a multiplayer session, part of the
+// matchmaking process.
+//
+// ---
+// summary: Summon other character
+// tags:
+// - "sos"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/summonOtherCharacterReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) summonCharacterHandler() http.HandlerFunc {
+	// swagger:model summonOtherCharacterReq
 	type summonOtherCharacterReq struct {
 		GhostID  int32  `form:"ghostID"`
 		NPRoomID string `form:"NPRoomID"`
@@ -277,7 +375,31 @@ func (s *Server) summonCharacterHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/summonBlackGhost.spd summonBlackGhostHandler
+//
+// Summon another character as a black ghost (invader) into a characters world.
+//
+// ---
+// summary: Summon black ghost
+// tags:
+// - "sos"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/summonBlackGhostReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) summonBlackGhostHandler() http.HandlerFunc {
+	// swagger:model summonBlackGhostReq
 	type summonBlackGhostReq struct {
 		NPRoomID string `form:"NPRoomID"`
 		Version  int    `form:"ver"`

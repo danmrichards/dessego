@@ -1,0 +1,1034 @@
+basePath: /
+consumes:
+- text/plain
+definitions:
+  addBloodMsgReq:
+    properties:
+      AddMsgCateID:
+        format: uint32
+        type: integer
+      AngX:
+        format: float
+        type: number
+      AngY:
+        format: float
+        type: number
+      AngZ:
+        format: float
+        type: number
+      BlockID:
+        format: uint32
+        type: integer
+      CharacterID:
+        type: string
+      MainMsgID:
+        format: uint32
+        type: integer
+      MsgID:
+        format: uint32
+        type: integer
+      PosX:
+        format: float
+        type: number
+      PosY:
+        format: float
+        type: number
+      PosZ:
+        format: float
+        type: number
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  addReplayDataReq:
+    properties:
+      AddMsgCateID:
+        format: uint32
+        type: integer
+      AngX:
+        format: float
+        type: number
+      AngY:
+        format: float
+        type: number
+      AngZ:
+        format: float
+        type: number
+      BlockID:
+        format: uint32
+        type: integer
+      CharacterID:
+        type: string
+      Data:
+        type: string
+      MainMsgID:
+        format: uint32
+        type: integer
+      MsgID:
+        format: uint32
+        type: integer
+      PosX:
+        format: float
+        type: number
+      PosY:
+        format: float
+        type: number
+      PosZ:
+        format: float
+        type: number
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  addSosDataReq:
+    properties:
+      AddMsgCateID:
+        format: uint32
+        type: integer
+      AngX:
+        format: float
+        type: number
+      AngY:
+        format: float
+        type: number
+      AngZ:
+        format: float
+        type: number
+      Black:
+        format: uint8
+        type: integer
+      BlockID:
+        format: uint32
+        type: integer
+      CharacterID:
+        type: string
+      MainMsgID:
+        format: uint32
+        type: integer
+      MsgID:
+        format: uint32
+        type: integer
+      PlayerInfo:
+        type: string
+      PlayerLevel:
+        format: uint32
+        type: integer
+      PosX:
+        format: float
+        type: number
+      PosY:
+        format: float
+        type: number
+      PosZ:
+        format: float
+        type: number
+      QWCLR:
+        format: uint32
+        type: integer
+      QWCWB:
+        format: uint32
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  addWorldTendencyReq:
+    properties:
+      Area1:
+        format: int64
+        type: integer
+      Area2:
+        format: int64
+        type: integer
+      Area3:
+        format: int64
+        type: integer
+      Area4:
+        format: int64
+        type: integer
+      Area5:
+        format: int64
+        type: integer
+      Area6:
+        format: int64
+        type: integer
+      Area7:
+        format: int64
+        type: integer
+      CharacterID:
+        type: string
+      LR1:
+        format: int64
+        type: integer
+      LR2:
+        format: int64
+        type: integer
+      LR3:
+        format: int64
+        type: integer
+      LR4:
+        format: int64
+        type: integer
+      LR5:
+        format: int64
+        type: integer
+      LR6:
+        format: int64
+        type: integer
+      LR7:
+        format: int64
+        type: integer
+      WB1:
+        format: int64
+        type: integer
+      WB2:
+        format: int64
+        type: integer
+      WB3:
+        format: int64
+        type: integer
+      WB4:
+        format: int64
+        type: integer
+      WB5:
+        format: int64
+        type: integer
+      WB6:
+        format: int64
+        type: integer
+      WB7:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  bloodMsgGradeReq:
+    properties:
+      CharacterID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  checkSosDataReq:
+    properties:
+      CharacterID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  deleteBloodMsgReq:
+    properties:
+      BloodMsgID:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  finaliseMultiplayReq:
+    properties:
+      CharacterID:
+        type: string
+      GradeA:
+        format: int64
+        type: integer
+      GradeB:
+        format: int64
+        type: integer
+      GradeC:
+        format: int64
+        type: integer
+      GradeD:
+        format: int64
+        type: integer
+      GradeS:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  getBloodMsgReq:
+    properties:
+      BlockID:
+        format: uint32
+        type: integer
+      CharacterID:
+        type: string
+      ReplayNum:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  getGhostReq:
+    properties:
+      BlockID:
+        format: uint32
+        type: integer
+      CharacterID:
+        type: string
+      MaxGhosts:
+        format: int64
+        type: integer
+      SOS:
+        format: int64
+        type: integer
+      SOSIDList:
+        items:
+          type: string
+        type: array
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  getSosDataReq:
+    properties:
+      Black:
+        format: int64
+        type: integer
+      BlackMax:
+        format: int64
+        type: integer
+      BlackMin:
+        format: int64
+        type: integer
+      BlockID:
+        format: uint32
+        type: integer
+      Invate:
+        format: int64
+        type: integer
+      InvateMax:
+        format: int64
+        type: integer
+      InvateMin:
+        format: int64
+        type: integer
+      MaxSOSNum:
+        format: int64
+        type: integer
+      PlayerLevelMax:
+        format: int64
+        type: integer
+      PlayerLevelMin:
+        format: int64
+        type: integer
+      SOSList:
+        type: string
+      SOSNum:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  initCharacterReq:
+    properties:
+      CharacterID:
+        type: string
+      Index:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  initMultiplayHandler:
+    properties:
+      CharacterID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  multiplayerGradeReq:
+    properties:
+      CharacterID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  outOfBlockReq:
+    properties:
+      CharacterID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  replayDataReq:
+    properties:
+      GhostID:
+        format: uint32
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  replayListReq:
+    properties:
+      BlockID:
+        format: uint32
+        type: integer
+      ReplayNum:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  setGhostReq:
+    properties:
+      CharacterID:
+        type: string
+      GhostBlockID:
+        format: uint32
+        type: integer
+      PosX:
+        format: float
+        type: number
+      PosY:
+        format: float
+        type: number
+      PosZ:
+        format: float
+        type: number
+      ReplayData:
+        type: string
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  summonBlackGhostReq:
+    properties:
+      NPRoomID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  summonOtherCharacterReq:
+    properties:
+      GhostID:
+        format: int32
+        type: integer
+      NPRoomID:
+        type: string
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  updateBloodMsgGradeReq:
+    properties:
+      BloodMsgID:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  updateOtherPlayerGradeReq:
+    properties:
+      CharacterID:
+        type: string
+      Grade:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+  worldTendencyReq:
+    properties:
+      MaxNum:
+        format: int64
+        type: integer
+      Version:
+        format: int64
+        type: integer
+    type: object
+    x-go-package: github.com/danmrichards/dessego/internal/server/game
+info:
+  description: The boostrap and game API endpoints for Demon's Souls
+  title: Demon's Souls API
+  version: 1.0.0
+paths:
+  /:
+    get:
+      description: |-
+        Returns a base64 encoded XML document to configure the game client for
+        multiplayer.
+      operationId: bootstrap
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+      summary: Bootstrap the game client
+      tags:
+      - bootstrap
+  /cgi-bin/addBloodMessage.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Adds a new blood message
+      operationId: addBloodMsgHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/addBloodMsgReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Add blood message
+      tags:
+      - messages
+  /cgi-bin/addReplayData.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Adds replay data for the given character
+      operationId: addReplayDataHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/addReplayDataReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Add replay data
+      tags:
+      - replays
+  /cgi-bin/addSosData.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Adds an SOS message for a given character
+      operationId: addSosDataHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/addSosDataReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Add SOS message
+      tags:
+      - sos
+  /cgi-bin/addWorldTendencyHandler.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Updates the currently stored world tendency data for a given character
+      operationId: addWorldTendencyHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/addWorldTendencyReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Add world tendency
+      tags:
+      - character
+  /cgi-bin/checkSosData.spd:
+    post:
+      consumes:
+      - text/plain
+      description: |-
+        Checks for a matching SOS for the given character, part of the matchmaking
+        process.
+      operationId: checkSosDataHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/checkSosDataReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Check SOS message
+      tags:
+      - sos
+  /cgi-bin/deleteBloodMessage.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Deletes a new blood message
+      operationId: deleteBloodMsgHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/deleteBloodMsgReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Delete blood message
+      tags:
+      - messages
+  /cgi-bin/finalizeMultiPlay.spd:
+    post:
+      consumes:
+      - text/plain
+      operationId: finaliseMultiplayHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/finaliseMultiplayReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Finalise multiplayer
+      tags:
+      - multiplayer
+  /cgi-bin/getBloodMessage.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Returns a list of blood messages within a given area of the game
+      operationId: getBloodMsgHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/getBloodMsgReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get blood messages
+      tags:
+      - messages
+  /cgi-bin/getBloodMessageGrade.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Gets the current blood message grade for a character
+      operationId: getBloodMessageGrade
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/bloodMsgGradeReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get blood message grade
+      tags:
+      - character
+  /cgi-bin/getMultiPlayGrade.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Gets the current multiplayer grade for a character, used when matchmaking
+      operationId: getMultiPlayGrade
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/multiplayerGradeReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get multiplayer grade
+      tags:
+      - character
+  /cgi-bin/getQWCData.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Returns the currently stored world tendency data for a given character
+      operationId: getQWCData
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/worldTendencyReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get world tendency
+      tags:
+      - character
+  /cgi-bin/getReplayData.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Returns a single replay's data
+      operationId: getReplayDataHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/replayDataReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get replay data
+      tags:
+      - replays
+  /cgi-bin/getReplayList.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Returns a list of available replays for an area of the game
+      operationId: replayListHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/replayListReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: List replays
+      tags:
+      - replays
+  /cgi-bin/getSosData.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Returns a list of SOS messages for a given area of the game
+      operationId: getSosDataHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/getSosDataReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get SOS message
+      tags:
+      - sos
+  /cgi-bin/getTimeMessage.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Gets a time message from the server
+      operationId: timeMsgHandler
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Login
+      tags:
+      - system
+  /cgi-bin/getWanderingGhost.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Returns a list of wandering ghosts (replays) within a given area
+        of the game
+      operationId: getWanderingGhost
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/getGhostReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Get wandering ghost
+      tags:
+      - ghost
+  /cgi-bin/initializeCharacter.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Initialises a new character and persists it for future reference
+      operationId: initializeCharacter
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/initCharacterReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Initialises a new character
+      tags:
+      - character
+  /cgi-bin/initializeMultiPlay.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Initialise multiplayer for a given character
+      operationId: initMultiplayHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/initMultiplayHandler'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Initialise multiplayer
+      tags:
+      - multiplayer
+  /cgi-bin/login.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Login to the server
+      operationId: login
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Login
+      tags:
+      - system
+  /cgi-bin/outOfBlock.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Triggered when a player leaves an area of the game
+      operationId: outOfBlockHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/outOfBlockReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Out of block
+      tags:
+      - multiplayer
+  /cgi-bin/setWanderingGhost.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Stores wandering ghost (replay) data for the current player
+      operationId: setWanderingGhost
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/setGhostReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Set wandering ghost
+      tags:
+      - ghost
+  /cgi-bin/summonBlackGhost.spd:
+    post:
+      consumes:
+      - text/plain
+      operationId: summonBlackGhostHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/summonBlackGhostReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Summon black ghost
+      tags:
+      - sos
+  /cgi-bin/summonOtherCharacter.spd:
+    post:
+      consumes:
+      - text/plain
+      description: |-
+        Summon another character to assist via a multiplayer session, part of the
+        matchmaking process.
+      operationId: summonCharacterHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/summonOtherCharacterReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Summon other character
+      tags:
+      - sos
+  /cgi-bin/updateBloodMessageGrade.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Updates the grade of a blood message
+      operationId: updateBloodMsgGradeHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/updateBloodMsgGradeReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Update blood message grade
+      tags:
+      - messages
+  /cgi-bin/updateOtherPlayerGrade.spd:
+    post:
+      consumes:
+      - text/plain
+      description: Sets the grade of a character after a multiplayer session
+      operationId: updateOtherPlayerGradeHandler
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/updateOtherPlayerGradeReq'
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: successful operation
+        "500":
+          description: unsuccessful operation
+      summary: Update other character grade
+      tags:
+      - multiplayer
+produces:
+- text/plain
+schemes:
+- http
+swagger: "2.0"

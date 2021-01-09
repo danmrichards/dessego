@@ -7,6 +7,23 @@ import (
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
+// swagger:operation POST /cgi-bin/login.spd login
+//
+// Login to the server
+//
+// ---
+// summary: Login
+// tags:
+// - "system"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) loginHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// First byte
@@ -35,6 +52,23 @@ func (s *Server) loginHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getTimeMessage.spd timeMsgHandler
+//
+// Gets a time message from the server
+//
+// ---
+// summary: Login
+// tags:
+// - "system"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) timeMsgHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// First byte

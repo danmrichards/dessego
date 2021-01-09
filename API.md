@@ -40,51 +40,8 @@ The server uses a standard HTTP/1.1 protocol.
 
 ### Endpoints
 
-#### Root
-**Path:** `/`
-
-**Description:** Returns a base64 encoded XML object containing game client configuration.
-
-**Request content-type:** N/A
-
-**Request fields:** N/A
-
-**Response content-type:** `text/plain`
-
-**Response fields:**
-
-| Field | Description |
-| :--- | :--- |
-| `ss` | Unknown. Observed to be `0` |
-| `lang1` | Unknown |
-| `lang2` | Unknown |
-| `lang3` | Unknown |
-| `lang4` | Unknown |
-| `lang5` | Unknown |
-| `lang6` | Unknown |
-| `lang7` | Unknown |
-| `lang8` | Unknown |
-| `lang11` | Unknown |
-| `lang12` | Unknown |
-| `gameurlN` | Repeated field, where `N` is a zero based index. URL to an instance of the game server. |
-| `browserurl1` | Unknown |
-| `browserurl2` | Unknown |
-| `browserurl3` | Unknown |
-| `interval1` | Unknown, observed to be `120` |
-| `interval2` | Unknown, observed to be `120` |
-| `interval3` | Unknown, observed to be `120` |
-| `interval4` | Unknown, observed to be `120` |
-| `interval5` | Unknown, observed to be `120` |
-| `interval6` | Unknown, observed to be `120` |
-| `interval7` | Unknown, observed to be `120` |
-| `interval8` | Unknown, observed to be `120` |
-| `interval11` | Unknown, observed to be `120` |
-| `interval12` | Unknown, observed to be `120` |
-| `getWanderingGhostInterval` | Interval, in seconds, at which to get wandering ghost data, observed at `20` |
-| `setWanderingGhostInterval` | Interval, in seconds, at which to set wandering ghost data, observed at `20` |
-| `getBloodMessageNum` | Number of blood messages to retrieve, observed at `80` |
-| `getReplayListNum` | Number of replays to retrieve, observed at `80` |
-| `enableWanderingGhost` | Pseudo-boolean (1 or 0) indicating if wandering ghosts are enabled |
+See the [swagger][swagger.yaml] file in the root of this repo, under the
+"boostrap" section.
 
 ## Game Server
 The Demon's Souls game server is responsible for handling interactions with the
@@ -129,63 +86,13 @@ of response being returned.
 
 ### Endpoints
 
-All response fields here are contained in the `Data` section of the response
-byte sequence. Byte ordering is shown from `0` but in reality starts from `5`
-in the real response.
+See the [swagger][swagger.yaml] file in the root of this repo, ignoring the
+"boostrap" section.
 
-#### Login
-**Path:** `/cgi-bin/login.spd`
+A caveat of this swagger file is that the request bodies are not representative
+of what the game will actually be sending. The case of the fields will be
+different, and as discussed above, the body will be encrypted. The examples
+shown in the swagger are purely for illustration purposes.
 
-**Description:** Logs a new client into the server
-
-**Request content-type:** N/A
-
-**Request fields:** N/A
-
-**Response content-type:** `text/plain`
-
-**Response fields:**
-
-| Field | Description |
-| :--- | :--- |
-| Status | Status of the server. Possible values:<br>0x00 - present EULA, create account<br>0x01 - present MOTD, can be multiple<br>0x02 - "Your account is currently suspended"<br>0x03 - "Your account has been banned."<br>0x05 - undergoing maintenance<br>0x06 - online service has been terminated<br>0x07 - network play cannot be used with this version |
-| Data | Dependent on the status. In the message-of-the-data case, contains the encoded message string |
-
-#### Time
-**Path:** `/cgi-bin/getTimeMessage.spd`
-
-**Description:** Get a time message from the server
-
-**Request content-type:** N/A
-
-**Request fields:** N/A
-
-**Response content-type:** `text/plain`
-
-**Response fields:**
-
-Unknown
-
-#### Initialise character
-**Path:** `/cgi-bin/initializeCharacter.spd`
-
-**Description:** Initialises a new character
-
-**Request content-type:** N/A
-
-**Request fields:**
-
-| Field | Description |
-| :--- | :--- |
-| `characterID` | ID of the new character |
-| `index` | Character index, allows for multiple characters on the same client |
-| `ver` | Game client version |
-
-**Response content-type:** `text/plain`
-
-**Response fields:**
-
-| Field | Description |
-| :--- | :--- |
-| Character ID | ID of the created character |
-| Terminator | Termination byte (0x00) |
+Similarly, the response bodies will be byte sequences which are not representable
+inside a swagger file.

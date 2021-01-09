@@ -14,7 +14,31 @@ import (
 // legacyMessageLimit is the limit of legacy messages to return via the API.
 const legacyMessageLimit = 5
 
+// swagger:operation POST /cgi-bin/getBloodMessage.spd getBloodMsgHandler
+//
+// Returns a list of blood messages within a given area of the game
+//
+// ---
+// summary: Get blood messages
+// tags:
+// - "messages"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/getBloodMsgReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) getBloodMsgHandler() http.HandlerFunc {
+	// swagger:model getBloodMsgReq
 	type getBloodMsgReq struct {
 		BlockID     uint32 `form:"blockID"`
 		ReplayNum   int    `form:"replayNum"`
@@ -98,7 +122,31 @@ func (s *Server) getBloodMsgHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/addBloodMessage.spd addBloodMsgHandler
+//
+// Adds a new blood message
+//
+// ---
+// summary: Add blood message
+// tags:
+// - "messages"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/addBloodMsgReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) addBloodMsgHandler() http.HandlerFunc {
+	// swagger:model addBloodMsgReq
 	type addBloodMsgReq struct {
 		CharacterID  string  `form:"characterID"`
 		BlockID      uint32  `form:"blockID"`
@@ -162,7 +210,31 @@ func (s *Server) addBloodMsgHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/deleteBloodMessage.spd deleteBloodMsgHandler
+//
+// Deletes a new blood message
+//
+// ---
+// summary: Delete blood message
+// tags:
+// - "messages"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/deleteBloodMsgReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) deleteBloodMsgHandler() http.HandlerFunc {
+	// swagger:model deleteBloodMsgReq
 	type deleteBloodMsgReq struct {
 		BloodMsgID int `form:"bmID"`
 		Version    int `form:"ver"`
@@ -202,7 +274,31 @@ func (s *Server) deleteBloodMsgHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/updateBloodMessageGrade.spd updateBloodMsgGradeHandler
+//
+// Updates the grade of a blood message
+//
+// ---
+// summary: Update blood message grade
+// tags:
+// - "messages"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/updateBloodMsgGradeReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) updateBloodMsgGradeHandler() http.HandlerFunc {
+	// swagger:model updateBloodMsgGradeReq
 	type updateBloodMsgGradeReq struct {
 		BloodMsgID int `form:"bmID"`
 		Version    int `form:"ver"`

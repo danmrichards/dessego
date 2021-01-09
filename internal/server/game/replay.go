@@ -13,6 +13,7 @@ import (
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
+// swagger:model addReplayDataReq
 type addReplayDataReq struct {
 	CharacterID  string  `form:"characterID"`
 	BlockID      uint32  `form:"blockID"`
@@ -48,7 +49,31 @@ func (a addReplayDataReq) ToReplay() *replay.Replay {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getReplayList.spd replayListHandler
+//
+// Returns a list of available replays for an area of the game
+//
+// ---
+// summary: List replays
+// tags:
+// - "replays"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/replayListReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) replayListHandler() http.HandlerFunc {
+	// swagger:model replayListReq
 	type replayListReq struct {
 		BlockID   uint32 `form:"blockID"`
 		ReplayNum int    `form:"replayNum"`
@@ -118,7 +143,31 @@ func (s *Server) replayListHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/getReplayData.spd getReplayDataHandler
+//
+// Returns a single replay's data
+//
+// ---
+// summary: Get replay data
+// tags:
+// - "replays"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/replayDataReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) getReplayDataHandler() http.HandlerFunc {
+	// swagger:model replayDataReq
 	type replayDataReq struct {
 		GhostID uint32 `form:"ghostID"`
 		Version int    `form:"ver"`
@@ -169,6 +218,29 @@ func (s *Server) getReplayDataHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/addReplayData.spd addReplayDataHandler
+//
+// Adds replay data for the given character
+//
+// ---
+// summary: Add replay data
+// tags:
+// - "replays"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/addReplayDataReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) addReplayDataHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)

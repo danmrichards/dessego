@@ -1,3 +1,18 @@
+// Demon's Souls API
+//
+// The boostrap and game API endpoints for Demon's Souls
+//
+//     Schemes: http
+//	   Version: 1.0.0
+//     basePath: /
+//
+//     Consumes:
+//     - text/plain
+//
+//     Produces:
+//     - text/plain
+//
+// swagger:meta
 package main
 
 import (

@@ -9,6 +9,7 @@ import (
 	"github.com/danmrichards/dessego/internal/transport"
 )
 
+// swagger:model finaliseMultiplayReq
 type finaliseMultiplayReq struct {
 	CharacterID string `form:"characterID"`
 	GradeS      int    `form:"gradeS"`
@@ -36,6 +37,7 @@ func (f finaliseMultiplayReq) Grade() character.MultiplayerGrade {
 	}
 }
 
+// swagger:model updateOtherPlayerGradeReq
 type updateOtherPlayerGradeReq struct {
 	CharacterID string `form:"characterID"`
 	Grade       int    `form:"grade"`
@@ -54,7 +56,31 @@ func (u updateOtherPlayerGradeReq) Character() string {
 	return u.CharacterID + "0"
 }
 
+// swagger:operation POST /cgi-bin/outOfBlock.spd outOfBlockHandler
+//
+// Triggered when a player leaves an area of the game
+//
+// ---
+// summary: Out of block
+// tags:
+// - "multiplayer"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/outOfBlockReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) outOfBlockHandler() http.HandlerFunc {
+	// swagger:model outOfBlockReq
 	type outOfBlockReq struct {
 		CharacterID string `form:"characterID"`
 		Version     int    `form:"ver"`
@@ -88,7 +114,31 @@ func (s *Server) outOfBlockHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/initializeMultiPlay.spd initMultiplayHandler
+//
+// Initialise multiplayer for a given character
+//
+// ---
+// summary: Initialise multiplayer
+// tags:
+// - "multiplayer"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/initMultiplayHandler"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) initMultiplayHandler() http.HandlerFunc {
+	// swagger:model initMultiplayHandler
 	type initMultiplayHandler struct {
 		CharacterID string `form:"characterID"`
 		Version     int    `form:"ver"`
@@ -129,6 +179,29 @@ func (s *Server) initMultiplayHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/finalizeMultiPlay.spd finaliseMultiplayHandler
+//
+// Finalise multiplayer for a given character, storing the grade.
+//
+// ---
+// summary: Finalise multiplayer
+// tags:
+// - "multiplayer"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/finaliseMultiplayReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) finaliseMultiplayHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
@@ -168,6 +241,29 @@ func (s *Server) finaliseMultiplayHandler() http.HandlerFunc {
 	}
 }
 
+// swagger:operation POST /cgi-bin/updateOtherPlayerGrade.spd updateOtherPlayerGradeHandler
+//
+// Sets the grade of a character after a multiplayer session
+//
+// ---
+// summary: Update other character grade
+// tags:
+// - "multiplayer"
+// consumes:
+// - text/plain
+// produces:
+// - text/plain
+// parameters:
+// - in: "body"
+//   name: "body"
+//   required: true
+//   schema:
+//     "$ref": "#/definitions/updateOtherPlayerGradeReq"
+// responses:
+//   '200':
+//     description: successful operation
+//   '500':
+//     description: unsuccessful operation
 func (s *Server) updateOtherPlayerGradeHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		b, err := ioutil.ReadAll(r.Body)
