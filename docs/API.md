@@ -30,10 +30,14 @@ not the game server.
 The game server itself comprises 2 components; technically _at least_ 2. The
 first component is the "bootstrap" and _n_ instances of regional game servers.
 
+![topology](demons-souls-topology.png)
+
 ## Bootstrap Server
 The bootstrap server is responsible for configuring a game client that has
 just booted up. It provides configuration information for the client to operate
 its multiplayer functions and also advertises URLs for regional game servers.
+
+![bootstrap](demons-souls-bootstrap.png)
 
 ### Transport
 The server uses a standard HTTP/1.1 protocol.
