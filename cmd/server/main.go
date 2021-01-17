@@ -134,7 +134,7 @@ func main() {
 		}
 		servers = append(servers, gs)
 
-		l.Info().Msg(region + " transport server listening on " + port)
+		l.Info().Msg(region + " game server listening on " + port)
 		go func() {
 			if err = gs.Serve(); err != nil {
 				fatal(l, err)
