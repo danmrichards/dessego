@@ -1,4 +1,4 @@
-# DeSSE Go [![License](http://img.shields.io/badge/license-mit-blue.svg)](https://raw.githubusercontent.com/danmrichards/go8080/master/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/danmrichards/dessego)](https://goreportcard.com/report/github.com/danmrichards/dessego)
+# DeSSE Go [![License](http://img.shields.io/badge/license-mit-blue.svg)](https://raw.githubusercontent.com/danmrichards/dessego/master/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/danmrichards/dessego)](https://goreportcard.com/report/github.com/danmrichards/dessego)
 A Demon's Souls server emulator implemented in Go and using SQLite for persistent
 data storage.
 
